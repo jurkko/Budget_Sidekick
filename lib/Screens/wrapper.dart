@@ -1,3 +1,6 @@
+import 'package:budget_sidekick/Screens/Auth/login.dart';
+import 'package:budget_sidekick/Screens/Auth/signup.dart';
+
 import 'package:budget_sidekick/screens/core/menu.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +9,6 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         //Return Manu or Authenticate
-        child: Menu());
+        child: LoginScreen());
   }
 }
