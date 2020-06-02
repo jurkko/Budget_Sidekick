@@ -1,3 +1,4 @@
+import 'package:budget_sidekick/Services/auth.dart';
 import 'package:budget_sidekick/screens/core/features/Analysis/analysis.dart';
 import 'package:budget_sidekick/screens/core/features/Coupons/coupons.dart';
 import 'package:budget_sidekick/screens/core/features/Events/events.dart';
@@ -11,6 +12,8 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+  final AuthService _auth = AuthService();
+
   int index = 0;
   List<Widget> viewList = [
     Expenses(),
@@ -22,8 +25,25 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          title: Text("Navigation"),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: <Widget>[
+            FlatButton.icon(
+              icon: Icon(
+                Icons.exit_to_app,
+              ),
+              label: Text(
+                'Sign Out',
+                style: TextStyle(color: Colors.white),
+              ),
+              textColor: Colors.white,
+              onPressed: () async {
+                await _auth.signOut();
+              },
+            )
+          ],
         ),
         body: viewList[index],
         drawer: MyDrawer(

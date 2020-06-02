@@ -46,7 +46,7 @@ class _LoginScreenState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Sign In',
+                        'Sign Up',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'OpenSans',
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<SignUpScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            'Password',
+                            'Confirm Password',
                             style: kLabelStyle,
                           ),
                           SizedBox(height: 10.0),
@@ -150,7 +150,7 @@ class _LoginScreenState extends State<SignUpScreen> {
                                   Icons.lock,
                                   color: Colors.white,
                                 ),
-                                hintText: 'Enter your Password',
+                                hintText: 'Confirm your Password',
                                 hintStyle: kHintTextStyle,
                               ),
                             ),

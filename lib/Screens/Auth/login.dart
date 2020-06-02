@@ -1,3 +1,4 @@
+import 'package:budget_sidekick/Services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'constants.dart';
@@ -8,6 +9,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthService _auth = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: RaisedButton(
                           elevation: 5.0,
-                          onPressed: () => print('Login Button Pressed'),
+                          onPressed: () => print('Sign Up Button Pressed'),
                           padding: EdgeInsets.all(15.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
@@ -158,6 +160,36 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Color(0xFF73AEF5),
                           child: Text(
                             'SIGN UP',
+                            style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                              letterSpacing: 1.5,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'OpenSans',
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        width: double.infinity,
+                        child: RaisedButton(
+                          elevation: 5.0,
+                          onPressed: () async {
+                            dynamic result = await _auth.signInAnon();
+                            if (result == null) {
+                              print('error signing in');
+                            } else {
+                              print(result.uid);
+                            }
+                          },
+                          padding: EdgeInsets.all(15.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          color: Color(0xFF73AEF5),
+                          child: Text(
+                            'ANON',
                             style: TextStyle(
                               color: Color(0xFFFFFFFF),
                               letterSpacing: 1.5,
