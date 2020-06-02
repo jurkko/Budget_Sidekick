@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_auth: ^0.16.1
+  cloud_firestore: ^0.13.6
   # Service locator
   get_it: ^3.1.0
   # Bloc for state management
@@ -29,17 +31,12 @@ dev_dependencies:
     sdk: flutter
   mockito: ^4.1.1
 
-
 flutter:
-
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
-
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -56,4 +53,3 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-

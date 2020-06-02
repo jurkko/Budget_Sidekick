@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "473567345529",
+    "firebase_url": "https://budgetsidekick-fd1aa.firebaseio.com",
+    "project_id": "budgetsidekick-fd1aa",
+    "storage_bucket": "budgetsidekick-fd1aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473567345529:android:cfe4962a4dc35735618da8",
+        "android_client_info": {
+          "package_name": "com.jutoma.budget_sidekick"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "473567345529-lsm932cb6be07ta5g3ftb3rg95to4742.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd1IH0FUEB9f3MNqOvJ67z8irVdztxnhs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "473567345529-lsm932cb6be07ta5g3ftb3rg95to4742.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
