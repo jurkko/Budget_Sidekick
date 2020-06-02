@@ -32,7 +32,7 @@ class _MenuState extends State<Menu> {
           actions: <Widget>[
             FlatButton.icon(
               icon: Icon(
-                Icons.exit_to_app,
+                Icons.person,
               ),
               label: Text(
                 'Sign Out',
@@ -80,13 +80,13 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.7,
         child: Drawer(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
+              decoration: BoxDecoration(color: Color(0xFF73AEF5)),
               child: Padding(
                 padding: EdgeInsets.all(6),
                 child: Column(
@@ -121,27 +121,27 @@ class MyDrawer extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.attach_money),
               title: Text('Expenses'),
               onTap: () => onTap(context, 0),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.event),
               title: Text('Events'),
               onTap: () => onTap(context, 1),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.alarm),
               title: Text('Reminder'),
               onTap: () => onTap(context, 2),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.show_chart),
               title: Text('Analysis'),
               onTap: () => onTap(context, 3),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.shopping_basket),
               title: Text('Coupons'),
               onTap: () => onTap(context, 4),
             ),
