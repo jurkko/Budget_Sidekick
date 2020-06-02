@@ -1,8 +1,8 @@
-import 'package:budget_sidekick/features/Analysis/analysis.dart';
-import 'package:budget_sidekick/features/Coupons/coupons.dart';
-import 'package:budget_sidekick/features/Events/events.dart';
-import 'package:budget_sidekick/features/Expenses/expenses.dart';
-import 'package:budget_sidekick/features/Reminder/reminder.dart';
+import 'package:budget_sidekick/screens/core/features/Analysis/analysis.dart';
+import 'package:budget_sidekick/screens/core/features/Coupons/coupons.dart';
+import 'package:budget_sidekick/screens/core/features/Events/events.dart';
+import 'package:budget_sidekick/screens/core/features/Expenses/expenses.dart';
+import 'package:budget_sidekick/screens/core/features/Reminder/reminder.dart';
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
