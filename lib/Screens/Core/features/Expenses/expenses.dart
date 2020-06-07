@@ -28,7 +28,6 @@ class ExpensesState extends State<Expenses> {
       backgroundColor: Colors.blue,
       body: Column(
         children: <Widget>[
-        
           StreamBuilder(
               stream: _firestore
                   .collection('Expenses')
@@ -50,7 +49,6 @@ class ExpensesState extends State<Expenses> {
                     expenseWidgets.add(expenseWidget);
                   }
                   return Expanded(
-                    
                     child: ListView(
                       children: expenseWidgets,
                     ),
@@ -87,7 +85,7 @@ class ExpensesState extends State<Expenses> {
   void getExpensesStream(FirebaseUser loggedInUser) async {
     await for (var snapshot in _firestore
         .collection('Expenses')
-        .where('user', isEqualTo: id)
+        .where('user', isEqualTo: loggedInUser.uid)
         .snapshots()) {
       for (var message in snapshot.documents) {
         print(message.data);
