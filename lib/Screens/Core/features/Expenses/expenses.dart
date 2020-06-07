@@ -85,7 +85,7 @@ class ExpensesState extends State<Expenses> {
   void getExpensesStream(FirebaseUser loggedInUser) async {
     await for (var snapshot in _firestore
         .collection('Expenses')
-        .where('user', isEqualTo: loggedInUser.uid)
+        .where('user', isEqualTo: loggedInUser.uid) //Fixed :)
         .snapshots()) {
       for (var message in snapshot.documents) {
         print(message.data);
