@@ -1,3 +1,4 @@
+import 'package:budget_sidekick/Services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:budget_sidekick/Models/user.dart';
 
@@ -43,6 +44,8 @@ class AuthService {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
+
+      await DatabaseService(uid: user.uid).updateAccount(0);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

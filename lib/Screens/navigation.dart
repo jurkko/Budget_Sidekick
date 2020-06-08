@@ -1,4 +1,3 @@
-import 'package:budget_sidekick/Screens/Core/features/Expenses/addExpense.dart';
 import 'package:budget_sidekick/Screens/Core/features/Expenses/expenses.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +11,6 @@ class BudgetTracker extends StatelessWidget {
       initialRoute: 'Start',
       routes: {
         Expenses.id: (context) => Expenses(),
-        AddExpense.id: (context) => AddExpense(),
       },
     );
   }
