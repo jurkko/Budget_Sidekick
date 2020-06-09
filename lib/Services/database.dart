@@ -16,10 +16,10 @@ class DatabaseService {
       Firestore.instance.collection('Expenses');
   final CollectionReference categoryCollection =
       Firestore.instance.collection('Categories');
-
-  //Handle Account (Balance)
   final CollectionReference eventCollection =
       Firestore.instance.collection('Event');            
+
+  //Handle Account (Balance)
   Future updateAccount(int balance) async {
     return await accountCollection.document(uid).setData({'balance': balance});
   }
