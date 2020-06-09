@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
+import 'textAnimate.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'customDialog.dart';
 
@@ -17,6 +17,8 @@ class Expenses extends StatefulWidget {
 
 class ExpensesState extends State<Expenses> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String value = "Koruza";
   Expense deletedExpense;
   List<Expense> listOfExpenses = [];
   _dialogAddExpense() {
@@ -115,22 +117,27 @@ class ExpensesState extends State<Expenses> {
                                                 padding: EdgeInsets.only(
                                                     left: width * 0.05),
                                                 child: Container(
-                                                  width: width * 0.6,
-                                                  child: Text(
-                                                    account.balance.toString() +
-                                                        "€",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        color: Colors.lightBlue[
-                                                            700], //Colors.indigo[400],
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: width * 0.1
-                                                        //width * 0.1 //_saldoTamanho(saldoAtual)
-                                                        ),
-                                                  ),
-                                                ),
+                                                    width: width * 0.6,
+                                                    child: TextAnimate<String>(
+                                                      initialData: "Balance",
+                                                      data: account.balance
+                                                          .toString(),
+                                                      builder: (value) => Text(
+                                                        value + "€",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                    .lightBlue[
+                                                                700], //Colors.indigo[400],
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize:
+                                                                width * 0.1
+                                                            //width * 0.1 //_saldoTamanho(saldoAtual)
+                                                            ),
+                                                      ),
+                                                    )),
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
@@ -220,7 +227,7 @@ class ExpensesState extends State<Expenses> {
                                                     ),
                                                   ),
                                                   duration:
-                                                      Duration(seconds: 4),
+                                                      Duration(seconds: 2),
                                                   backgroundColor: Colors.blue,
                                                   action: SnackBarAction(
                                                     label: "Undo",
