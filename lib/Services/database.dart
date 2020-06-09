@@ -46,7 +46,7 @@ class DatabaseService {
       return Category(
           id: doc.documentID,
           name: doc.data['name'],
-          icon: doc.data['icon'],
+          iconCode: doc.data['icon'],
           user_id: doc.data['user_id']);
     }).toList();
   }
@@ -54,8 +54,13 @@ class DatabaseService {
   Stream<List<Category>> get categories {
     return categoryCollection.snapshots().map(_categoriesFromSnapshot);
   }
-  //Add Category
 
+  //Add Category
+  Future addCategory(String name, int iconCode) {
+    Firestore.instance
+        .collection('Categories')
+        .add({'name': name, 'iconCode': iconCode, 'user_id': uid});
+  }
   //Edit Category
 
   //Remove Category
@@ -68,7 +73,7 @@ class DatabaseService {
       'amount': expense.amount,
       'category': expense.category,
       'profit': expense.profit,
-      'user_id': expense.user_id,
+      'user_id': uid,
       'date': expense.date
     }).whenComplete(() {
       if (expense.profit) {

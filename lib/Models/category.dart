@@ -1,7 +1,7 @@
 class Category {
   String id;
   String name;
-  String icon;
+  int iconCode;
   String user_id;
-  Category({this.id, this.name, this.icon, this.user_id});
+  Category({this.id, this.name, this.iconCode, this.user_id});
 }

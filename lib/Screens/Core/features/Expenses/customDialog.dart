@@ -71,23 +71,22 @@ class _CustomDialogState extends State<CustomDialog> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
+                  textCapitalization: TextCapitalization.sentences,
+                  cursorColor: Colors.white,
                   controller: _controllerName,
                   maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
+                  style: TextStyle(fontSize: width * 0.05, color: Colors.white),
                   keyboardType: TextInputType.text,
                   maxLines: 1,
                   textAlign: TextAlign.start,
                   decoration: new InputDecoration(
-                    //hintText: "descrição",
                     labelText: "Name",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
+                    labelStyle: TextStyle(color: Colors.white),
                     contentPadding: EdgeInsets.only(
                         left: width * 0.04,
                         top: width * 0.041,
                         bottom: width * 0.041,
                         right: width * 0.04),
-
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(width * 0.04),
                       borderSide: BorderSide(

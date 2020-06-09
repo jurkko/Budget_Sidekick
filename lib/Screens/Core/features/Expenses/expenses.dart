@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'textAnimate.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'customDialog.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class Expenses extends StatefulWidget {
   static const String id = 'expenses';
@@ -19,8 +18,6 @@ class Expenses extends StatefulWidget {
 class ExpensesState extends State<Expenses> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  CalendarController calendarController;
-  var formatterCalendar = new DateFormat('MM-yyyy');
   Expense deletedExpense;
   String dataFormatada;
   List<Expense> listOfExpenses = [];
