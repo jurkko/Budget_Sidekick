@@ -1,6 +1,6 @@
 import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/user.dart';
-import 'package:budget_sidekick/Screens/Core/features/Calculator/calculator.dart';
+import 'package:budget_sidekick/Screens/Core/features/Categories/categories.dart';
 import 'package:budget_sidekick/Services/auth.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'package:budget_sidekick/screens/core/features/Analysis/analysis.dart';
@@ -24,12 +24,10 @@ class _MenuState extends State<Menu> {
     Events(),
     Reminder(),
     Analysis(),
-    Calculator()
+    Category()
   ];
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -92,7 +90,7 @@ class MyDrawer extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Account account = snapshot.data;
-            print("Menu | account balance: " + account.balance.toString());
+            //print("Menu | account balance: " + account.balance.toString());
             return SizedBox(
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Drawer(
@@ -107,7 +105,7 @@ class MyDrawer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            Text(account.balance.toString(),
+                            Text(user.email,
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w400,
@@ -115,7 +113,7 @@ class MyDrawer extends StatelessWidget {
                             SizedBox(
                               height: 15,
                             ),
-                            Text("Balance",
+                            Text("Balance: " + account.balance.toString() + "€",
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
@@ -124,7 +122,7 @@ class MyDrawer extends StatelessWidget {
                               height: 15,
                             ),
                             Text(
-                              'Neki se maybe',
+                              'Upcoming Events: 5',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
@@ -155,8 +153,8 @@ class MyDrawer extends StatelessWidget {
                       onTap: () => onTap(context, 3),
                     ),
                     ListTile(
-                      leading: Icon(Icons.schedule),
-                      title: Text('Calculator'),
+                      leading: Icon(Icons.list),
+                      title: Text('Categories'),
                       onTap: () => onTap(context, 4),
                     ),
                   ],

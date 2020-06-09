@@ -1,6 +1,9 @@
+import 'package:budget_sidekick/Services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:budget_sidekick/Models/user.dart';
 
 class CustomDialog extends StatefulWidget {
   final Expense e;
@@ -26,12 +29,18 @@ class _CustomDialogState extends State<CustomDialog> {
   Color _colorContainer = Colors.green[400];
   Color _colorTextButtom = Colors.green;
 
+  //Fields
+  String name;
+  String amount;
+  String category = 'Other';
+  bool profit = true;
+
   TextEditingController _controllerAmount = TextEditingController();
   TextEditingController _controllerName = TextEditingController();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
+    final user = Provider.of<User>(context);
     return AlertDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(width * 0.050)),
@@ -45,12 +54,86 @@ class _CustomDialogState extends State<CustomDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              TextField(
+                  controller: _controllerName,
+                  maxLength: 20,
+                  style: TextStyle(fontSize: width * 0.05),
+                  keyboardType: TextInputType.text,
+                  maxLines: 1,
+                  textAlign: TextAlign.start,
+                  decoration: new InputDecoration(
+                    //hintText: "descrição",
+                    labelText: "Name",
+                    labelStyle: TextStyle(color: Colors.white54),
+                    //hintStyle: TextStyle(color: Colors.grey[400]),
+                    contentPadding: EdgeInsets.only(
+                        left: width * 0.04,
+                        top: width * 0.041,
+                        bottom: width * 0.041,
+                        right: width * 0.04),
+
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(width * 0.04),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(width * 0.04),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 2.0,
+                      ),
+                    ),
+                  )),
               Row(
                 children: <Widget>[
-                  Text(
-                    "€ ",
-                    style:
-                        TextStyle(color: Colors.white, fontSize: width * 0.06),
+                  Radio(
+                    activeColor: Colors.green[900],
+                    value: 1,
+                    groupValue: _profit,
+                    onChanged: (value) {
+                      setState(() {
+                        profit = true;
+                        _profit = value;
+                        _colorContainer = Colors.green[400];
+                        _colorTextButtom = Colors.green;
+                      });
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: width * 0.01),
+                    child: Text("Inflow"),
+                  ),
+                  Radio(
+                    activeColor: Colors.red[900],
+                    value: 2,
+                    groupValue: _profit,
+                    onChanged: (value) {
+                      setState(() {
+                        profit = false;
+                        _profit = value;
+                        _colorContainer = Colors.red[300];
+                        _colorTextButtom = Colors.red[300];
+                      });
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: width * 0.01),
+                    child: Text("Outflow"),
+                  )
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "€ ",
+                      style: TextStyle(
+                          color: Colors.white, fontSize: width * 0.07),
+                    ),
                   ),
                   Flexible(
                     child: TextField(
@@ -89,79 +172,54 @@ class _CustomDialogState extends State<CustomDialog> {
               ),
               Row(
                 children: <Widget>[
-                  Radio(
-                    activeColor: Colors.green[900],
-                    value: 1,
-                    groupValue: _profit,
-                    onChanged: (value) {
-                      print(value);
-                      setState(() {
-                        _profit = value;
-                        _colorContainer = Colors.green[400];
-                        _colorTextButtom = Colors.green;
-                      });
-                    },
+                  Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: Text(
+                      "Category",
+                      style: TextStyle(
+                          color: Colors.white, fontSize: width * 0.05),
+                    ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: width * 0.01),
-                    child: Text("Outflow"),
+                    padding: const EdgeInsets.only(
+                      left: 13,
+                    ),
+                    child: new Theme(
+                      data: Theme.of(context)
+                          .copyWith(canvasColor: _colorContainer),
+                      child: DropdownButton<String>(
+                        value: category,
+                        onChanged: (String newValue) {
+                          setState(() {
+                            category = newValue;
+                          });
+                        },
+                        style: TextStyle(color: Colors.white),
+                        underline: Container(
+                          height: 1,
+                          color: Colors.white,
+                        ),
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.white,
+                        ),
+                        items: <String>[
+                          'Food',
+                          'Clothing',
+                          'Repairs',
+                          'Maintenance',
+                          'Other',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   )
                 ],
               ),
-              Row(
-                children: <Widget>[
-                  Radio(
-                    activeColor: Colors.red[900],
-                    value: 2,
-                    groupValue: _profit,
-                    onChanged: (value) {
-                      print(value);
-                      setState(() {
-                        _profit = value;
-                        _colorContainer = Colors.red[300];
-                        _colorTextButtom = Colors.red[300];
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: width * 0.01),
-                    child: Text("Inflow"),
-                  )
-                ],
-              ),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.text,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Name",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
               Padding(
                 padding: EdgeInsets.only(top: width * 0.09),
                 child: Row(
@@ -180,17 +238,30 @@ class _CustomDialogState extends State<CustomDialog> {
                       onTap: () {
                         if (_controllerAmount.text.isNotEmpty &&
                             _controllerName.text.isNotEmpty) {
-                          Expense mov = Expense();
-                          String amount;
+                          Expense expense = Expense();
+
                           if (_controllerAmount.text.contains(",")) {
                             amount = _controllerAmount.text
                                 .replaceAll(RegExp(","), ".");
                           } else {
                             amount = _controllerAmount.text;
                           }
+                          name = _controllerName.text;
+                          //date = neki
+                          expense.amount = int.parse(amount);
+                          expense.name = name;
+                          expense.category = category;
+                          expense.profit = profit;
+                          expense.user_id = user.uid;
+                          print("ADDING EXPENSE");
+                          if (edit) {
+                            DatabaseService(uid: user.uid)
+                                .updateExpense(expense);
+                          } else {
+                            DatabaseService(uid: user.uid).addExpense(expense);
+                          }
                           /*
                           //mov.data = formatter.format(DateTime.now());
-                          mov.name = _controllerName.text;
 
                           if (_profit == 1) {
                             mov.amount = double.parse(amount);
@@ -213,7 +284,6 @@ class _CustomDialogState extends State<CustomDialog> {
                                 : _movHelper.updateMovimentacao(mov);
                           }*/
                           Navigator.pop(context);
-                          //initState();
                         }
                       },
                       child: Container(

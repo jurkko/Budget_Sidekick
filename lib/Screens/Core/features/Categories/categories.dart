@@ -4,12 +4,12 @@ import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/user.dart';
 import 'package:budget_sidekick/Services/database.dart';
 
-class Calculator extends StatefulWidget {
+class Category extends StatefulWidget {
   @override
-  CalculatorState createState() => CalculatorState();
+  CategoryState createState() => CategoryState();
 }
 
-class CalculatorState extends State<Calculator> {
+class CategoryState extends State<Category> {
   var _balance;
   String stringBalance;
 
@@ -50,10 +50,8 @@ class CalculatorState extends State<Calculator> {
                         side: BorderSide(color: Colors.white)),
                     onPressed: () async {
                       print("Adding 50");
-                      _balance = _balance + 50;
-                      stringBalance = _balance.toString();
                       await DatabaseService(uid: user.uid)
-                          .updateAccount(_balance);
+                          .handleBalance(50, true);
                     }),
                 RaisedButton(
                     child: Text(
@@ -72,10 +70,8 @@ class CalculatorState extends State<Calculator> {
                         side: BorderSide(color: Colors.white)),
                     onPressed: () async {
                       print("Reducing 50");
-                      _balance = _balance - 50;
-                      stringBalance = _balance.toString();
                       await DatabaseService(uid: user.uid)
-                          .updateAccount(_balance);
+                          .handleBalance(50, false);
                     })
               ],
             )));
