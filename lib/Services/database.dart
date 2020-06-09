@@ -46,7 +46,7 @@ class DatabaseService {
       return Category(
           id: doc.documentID,
           name: doc.data['name'],
-          iconCode: doc.data['icon'],
+          iconCode: doc.data['iconCode'],
           user_id: doc.data['user_id']);
     }).toList();
   }
@@ -64,7 +64,9 @@ class DatabaseService {
   //Edit Category
 
   //Remove Category
-
+  Future removeCategory(Category category) {
+    Firestore.instance.collection('Categories').document(category.id).delete();
+  }
   //Expenses Services
 
   Future addExpense(Expense expense) {
