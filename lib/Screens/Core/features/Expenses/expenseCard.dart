@@ -29,7 +29,6 @@ class ExpenseCard extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.only(left: width * 0.05),
                         child: Container(
-                          width: width * 0.25,
                           child: Text(
                             DateFormat('dd.MM.yyy').format(expense.date),
                             //overflow: TextOverflow.ellipsis,
@@ -42,9 +41,16 @@ class ExpenseCard extends StatelessWidget {
                           ),
                         )),
                     Padding(
-                        padding: EdgeInsets.only(left: width * 0.00),
+                        padding: EdgeInsets.only(left: width * 0.02),
                         child: Container(
-                          width: width * 0.4,
+                            child: Icon(
+                          Icons.edit,
+                          color: Colors.grey[600],
+                          size: width * 0.044,
+                        ))),
+                    Padding(
+                        padding: EdgeInsets.only(left: width * 0.02),
+                        child: Container(
                           child: Text(
                             expense.name,
                             overflow: TextOverflow.ellipsis,

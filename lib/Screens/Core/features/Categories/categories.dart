@@ -1,83 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:budget_sidekick/Models/account.dart';
+import 'package:budget_sidekick/Models/category.dart';
 import 'package:budget_sidekick/Models/user.dart';
 import 'package:budget_sidekick/Services/database.dart';
 
-class Category extends StatefulWidget {
+class Categories extends StatefulWidget {
   @override
-  CategoryState createState() => CategoryState();
+  CategoriesState createState() => CategoriesState();
 }
 
-class CategoryState extends State<Category> {
-  var _balance;
-  String stringBalance;
-
+class CategoriesState extends State<Categories> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Category> listOfCategories;
+  TextEditingController _controllerName = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    return StreamBuilder<Account>(
-        stream: DatabaseService(uid: user.uid).account,
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    return StreamBuilder<List<Category>>(
+        stream: DatabaseService().categories,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            _balance = snapshot.data.balance;
-            return Container(
-                child: Center(
-                    child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: SizedBox(
-                    height: 100,
-                    child:
-                        Text(stringBalance ?? snapshot.data.balance.toString()),
-                  ),
+            print(snapshot.data);
+            listOfCategories = snapshot.data;
+            return Scaffold(
+              backgroundColor: Colors.white,
+              key: _scaffoldKey,
+              body: SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Column(
+                  children: <Widget>[
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          height: height * 0.3, //300,
+                          color: Colors.blue,
+                        ),
+                        Positioned(
+                          top: width * 0.11, //70
+                          left: width * 0.2, //30,
+                          child: Text(
+                            "Categories",
+                            style: TextStyle(
+                                color: Colors.white, fontSize: width * 0.06 //30
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          height: height * 0.8, //300,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                RaisedButton(
-                    child: Text(
-                      'Add 50',
-                      style: TextStyle(
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'OpenSans',
-                      ),
-                    ),
-                    padding: EdgeInsets.all(25.0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        side: BorderSide(color: Colors.white)),
-                    onPressed: () async {
-                      print("Adding 50");
-                      await DatabaseService(uid: user.uid)
-                          .handleBalance(50, true);
-                    }),
-                RaisedButton(
-                    child: Text(
-                      'Reduce 50',
-                      style: TextStyle(
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'OpenSans',
-                      ),
-                    ),
-                    padding: EdgeInsets.all(25.0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        side: BorderSide(color: Colors.white)),
-                    onPressed: () async {
-                      print("Reducing 50");
-                      await DatabaseService(uid: user.uid)
-                          .handleBalance(50, false);
-                    })
-              ],
-            )));
+              ),
+            );
           } else {
             return SizedBox(
-              child: Text("Jebat ga, nalaga alpa ne"),
+              child: Text("Jebat ga, neki nalaga ane"),
             );
           }
         });

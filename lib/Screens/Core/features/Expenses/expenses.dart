@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'textAnimate.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'customDialog.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class Expenses extends StatefulWidget {
   static const String id = 'expenses';
@@ -18,7 +19,10 @@ class Expenses extends StatefulWidget {
 class ExpensesState extends State<Expenses> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  CalendarController calendarController;
+  var formatterCalendar = new DateFormat('MM-yyyy');
   Expense deletedExpense;
+  String dataFormatada;
   List<Expense> listOfExpenses = [];
   _dialogAddExpense() {
     showDialog(
@@ -56,13 +60,14 @@ class ExpensesState extends State<Expenses> {
                       listOfExpenses = snapshot.data;
                       return Container(
                         child: SingleChildScrollView(
+                          physics: NeverScrollableScrollPhysics(),
                           child: Column(
                             children: <Widget>[
                               Stack(
                                 children: <Widget>[
                                   Container(
                                     width: double.infinity,
-                                    height: height * 0.334, //300,
+                                    height: height * 0.284, //300,
                                     color: Colors.white,
                                   ),
                                   Positioned(
@@ -71,14 +76,26 @@ class ExpensesState extends State<Expenses> {
                                     right: 0,
                                     child: Container(
                                         width: double.infinity,
-                                        height: height * 0.3, //250,
+                                        height: height * 0.25, //250,
                                         decoration: BoxDecoration(
                                           color:
                                               Colors.blue, //Colors.indigo[400],
                                         )),
                                   ),
                                   Positioned(
+                                    top: width * 0.11, //70
+                                    left: width * 0.2, //30,
+                                    child: Text(
+                                      "Expenses",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: width * 0.06 //30
+                                          ),
+                                    ),
+                                  ),
+                                  Positioned(
                                     bottom: 0,
+                                    top: width * 0.25,
                                     left: width * 0.07, // 30,
                                     right: width * 0.07, // 30,
                                     child: Container(
@@ -103,7 +120,7 @@ class ExpensesState extends State<Expenses> {
                                         children: <Widget>[
                                           Padding(
                                             padding: EdgeInsets.only(
-                                              left: width * 0.05,
+                                              left: width * 0.06,
                                               top: width * 0.04,
                                               bottom: width * 0.02,
                                             ),
@@ -126,7 +143,10 @@ class ExpensesState extends State<Expenses> {
                                                 child: Container(
                                                     width: width * 0.6,
                                                     child: TextAnimate<String>(
-                                                      initialData: "Balance",
+                                                      initialData: account
+                                                              .balance
+                                                              .toString() ??
+                                                          "",
                                                       data: account.balance
                                                           .toString(),
                                                       builder: (value) => Text(
@@ -197,7 +217,7 @@ class ExpensesState extends State<Expenses> {
                                   ),
                                   child: SizedBox(
                                       width: width,
-                                      height: height * 0.7,
+                                      height: height * 0.75,
                                       child: ListView.builder(
                                           itemCount: listOfExpenses.length,
                                           itemBuilder: (context, index) {

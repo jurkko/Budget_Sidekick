@@ -1,5 +1,6 @@
 import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/expense.dart';
+import 'package:budget_sidekick/Models/category.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -12,6 +13,8 @@ class DatabaseService {
       Firestore.instance.collection('Accounts');
   final CollectionReference expenseCollection =
       Firestore.instance.collection('Expenses');
+  final CollectionReference categoryCollection =
+      Firestore.instance.collection('Categories');
 
   //Handle Account (Balance)
   Future updateAccount(int balance) async {
@@ -36,6 +39,27 @@ class DatabaseService {
         .snapshots()
         .map(_accountFromSnapshot);
   }
+  //Categories Services
+
+  List<Category> _categoriesFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return Category(
+          id: doc.documentID,
+          name: doc.data['name'],
+          icon: doc.data['icon'],
+          user_id: doc.data['user_id']);
+    }).toList();
+  }
+
+  Stream<List<Category>> get categories {
+    return categoryCollection.snapshots().map(_categoriesFromSnapshot);
+  }
+  //Add Category
+
+  //Edit Category
+
+  //Remove Category
+
   //Expenses Services
 
   Future addExpense(Expense expense) {
