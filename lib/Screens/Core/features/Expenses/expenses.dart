@@ -18,7 +18,6 @@ class Expenses extends StatefulWidget {
 class ExpensesState extends State<Expenses> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String value = "Koruza";
   Expense deletedExpense;
   List<Expense> listOfExpenses = [];
   _dialogAddExpense() {
@@ -26,6 +25,14 @@ class ExpensesState extends State<Expenses> {
         context: context,
         builder: (context) {
           return CustomDialog();
+        });
+  }
+
+  _dialogEditExpense(Expense exp) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return CustomDialog(e: exp);
         });
   }
 
@@ -64,7 +71,7 @@ class ExpensesState extends State<Expenses> {
                                     right: 0,
                                     child: Container(
                                         width: double.infinity,
-                                        height: height * 0.28, //250,
+                                        height: height * 0.3, //250,
                                         decoration: BoxDecoration(
                                           color:
                                               Colors.blue, //Colors.indigo[400],
@@ -184,85 +191,93 @@ class ExpensesState extends State<Expenses> {
                               ),
                               Padding(
                                   padding: EdgeInsets.only(
-                                      left: width * 0.04,
-                                      right: width * 0.04,
-                                      top: 0),
+                                    bottom: 0,
+                                    left: width * 0.00,
+                                    right: width * 0.00,
+                                  ),
                                   child: SizedBox(
                                       width: width,
-                                      height: height * 0.63,
+                                      height: height * 0.7,
                                       child: ListView.builder(
                                           itemCount: listOfExpenses.length,
                                           itemBuilder: (context, index) {
                                             Expense e = listOfExpenses[index];
-                                            return Dismissible(
-                                              direction:
-                                                  DismissDirection.endToStart,
-                                              onDismissed: (direction) {
-                                                deletedExpense =
-                                                    listOfExpenses[index];
-                                                setState(() {
-                                                  listOfExpenses
-                                                      .removeAt(index);
-                                                });
-                                                print(e.user_id);
-                                                DatabaseService(uid: user.uid)
-                                                    .removeExpense(e);
-                                                DatabaseService(uid: user.uid)
-                                                    .handleBalance(
-                                                        e.amount, !e.profit);
-                                                final snackBar = SnackBar(
-                                                  content: Container(
-                                                    padding: EdgeInsets.only(
-                                                        bottom: width * 0.025),
-                                                    alignment:
-                                                        Alignment.bottomLeft,
-                                                    height: height * 0.05,
-                                                    child: Text(
-                                                      "Expense deleted",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          //fontWeight: FontWeight.bold,
-                                                          fontSize:
-                                                              width * 0.05),
-                                                    ),
-                                                  ),
-                                                  duration:
-                                                      Duration(seconds: 2),
-                                                  backgroundColor: Colors.blue,
-                                                  action: SnackBarAction(
-                                                    label: "Undo",
-                                                    textColor: Colors.white,
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        listOfExpenses.insert(
-                                                            index,
-                                                            deletedExpense);
-                                                      });
-                                                      DatabaseService(
-                                                              uid: user.uid)
-                                                          .addExpense(
-                                                              deletedExpense);
-                                                    },
-                                                  ),
-                                                );
-                                                _scaffoldKey.currentState
-                                                    .showSnackBar(snackBar);
+                                            return InkWell(
+                                              onLongPress: () {
+                                                _dialogEditExpense(e);
                                               },
-                                              key: ValueKey(e.id),
-                                              background: Container(
-                                                padding: EdgeInsets.only(
-                                                    right: 10,
-                                                    top: width * 0.04),
-                                                alignment: Alignment.topRight,
-                                                color: Colors.red,
-                                                child: Icon(
-                                                  Icons.delete_outline,
-                                                  color: Colors.white,
-                                                  size: width * 0.07,
+                                              child: Dismissible(
+                                                direction:
+                                                    DismissDirection.endToStart,
+                                                onDismissed: (direction) {
+                                                  deletedExpense =
+                                                      listOfExpenses[index];
+                                                  setState(() {
+                                                    listOfExpenses
+                                                        .removeAt(index);
+                                                  });
+                                                  print(e.user_id);
+                                                  DatabaseService(uid: user.uid)
+                                                      .removeExpense(e);
+                                                  DatabaseService(uid: user.uid)
+                                                      .handleBalance(
+                                                          e.amount, !e.profit);
+                                                  final snackBar = SnackBar(
+                                                    content: Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom:
+                                                              width * 0.025),
+                                                      alignment:
+                                                          Alignment.bottomLeft,
+                                                      height: height * 0.05,
+                                                      child: Text(
+                                                        "Expense deleted",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            //fontWeight: FontWeight.bold,
+                                                            fontSize:
+                                                                width * 0.05),
+                                                      ),
+                                                    ),
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                    backgroundColor:
+                                                        Colors.blue,
+                                                    action: SnackBarAction(
+                                                      label: "Undo",
+                                                      textColor: Colors.white,
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          listOfExpenses.insert(
+                                                              index,
+                                                              deletedExpense);
+                                                        });
+                                                        DatabaseService(
+                                                                uid: user.uid)
+                                                            .addExpense(
+                                                                deletedExpense);
+                                                      },
+                                                    ),
+                                                  );
+                                                  _scaffoldKey.currentState
+                                                      .showSnackBar(snackBar);
+                                                },
+                                                key: ValueKey(e.id),
+                                                background: Container(
+                                                  padding: EdgeInsets.only(
+                                                      right: 10,
+                                                      top: width * 0.04),
+                                                  alignment: Alignment.topRight,
+                                                  color: Colors.red,
+                                                  child: Icon(
+                                                    Icons.delete_outline,
+                                                    color: Colors.white,
+                                                    size: width * 0.07,
+                                                  ),
                                                 ),
-                                              ),
-                                              child: ExpenseCard(
-                                                expense: e,
+                                                child: ExpenseCard(
+                                                  expense: e,
+                                                ),
                                               ),
                                             );
                                           }))),
@@ -272,12 +287,13 @@ class ExpensesState extends State<Expenses> {
                       );
                     } else {
                       print(snapshot);
-                      return SizedBox(child: Text("Jebat ga, nalaga alpa ne"));
+                      return SizedBox(
+                          child: Text("Neki jebejo expensi kolega"));
                     }
                   });
             } else {
               return SizedBox(
-                child: Text("Jebat ga, nalaga alpa ne"),
+                child: Text("Accounta ni ljega"),
               );
             }
           }),

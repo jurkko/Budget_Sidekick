@@ -44,7 +44,8 @@ class DatabaseService {
       'amount': expense.amount,
       'category': expense.category,
       'profit': expense.profit,
-      'user_id': expense.user_id
+      'user_id': expense.user_id,
+      'date': expense.date
     }).whenComplete(() {
       if (expense.profit) {
         handleBalance(expense.amount, true);
@@ -54,12 +55,29 @@ class DatabaseService {
     });
   }
 
-  Future updateExpense(Expense expense) {
+  Future updateExpense(Expense expense, bool preProfit, int preAmount) {
+    bool changingBalance;
+    if (expense.amount == preAmount && expense.profit == preProfit) {
+      changingBalance = false;
+    } else {
+      handleBalance(preAmount, !preProfit);
+      changingBalance = true;
+    }
+
     Firestore.instance.collection('Expenses').document(expense.id).updateData({
       'name': expense.name,
       'amount': expense.amount,
       'category': expense.category,
-      'profit': expense.profit
+      'profit': expense.profit,
+      'date': expense.date
+    }).whenComplete(() {
+      if (changingBalance) {
+        if (expense.profit) {
+          handleBalance(expense.amount, true);
+        } else {
+          handleBalance(expense.amount, false);
+        }
+      }
     });
   }
 
@@ -69,13 +87,16 @@ class DatabaseService {
 
   List<Expense> _expenseFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
+      Timestamp t = doc.data['date'];
+      DateTime d = t.toDate();
       return Expense(
           id: doc.documentID.toString(),
           name: doc.data['name'] ?? '',
           amount: doc.data['amount'] ?? 0,
           category: doc.data['category'] ?? '',
           profit: doc.data['profit'] ?? false,
-          user_id: doc.data['user_id']);
+          user_id: doc.data['user_id'],
+          date: d);
     }).toList();
   }
 
