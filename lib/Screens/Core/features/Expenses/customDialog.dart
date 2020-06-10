@@ -211,12 +211,12 @@ class _CustomDialogState extends State<CustomDialog> {
                                 "Category",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: width * 0.05),
+                                    fontSize: width * 0.04),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                left: 13,
+                                left: 3,
                               ),
                               child: new Theme(
                                 data: Theme.of(context)
@@ -226,7 +226,6 @@ class _CustomDialogState extends State<CustomDialog> {
                                   onChanged: (String newValue) {
                                     setState(() {
                                       initialCat = newValue;
-                                      //Set Icon Code
                                     });
                                   },
                                   style: TextStyle(color: Colors.white),
@@ -244,10 +243,19 @@ class _CustomDialogState extends State<CustomDialog> {
                                     return DropdownMenuItem<String>(
                                       onTap: () {
                                         iconCode = cat.iconCode;
-                                        print(iconCode.toString());
                                       },
                                       value: cat.id,
-                                      child: Text(cat.name),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(cat.name),
+                                          Icon(
+                                              IconData(cat.iconCode,
+                                                  fontFamily: 'MaterialIcons'),
+                                              color: Colors.white),
+                                        ],
+                                      ),
                                     );
                                   }).toList(),
                                 ),

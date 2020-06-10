@@ -69,7 +69,7 @@ class CategoriesState extends State<Categories> {
                                     TextCapitalization.sentences,
                                 cursorColor: Colors.white,
                                 controller: _controllerName,
-                                maxLength: 20,
+                                maxLength: 15,
                                 style: TextStyle(fontSize: width * 0.05),
                                 keyboardType: TextInputType.text,
                                 maxLines: 1,

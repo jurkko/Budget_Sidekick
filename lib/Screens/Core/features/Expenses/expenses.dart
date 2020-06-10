@@ -54,6 +54,7 @@ class ExpensesState extends State<Expenses> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       listOfExpenses = snapshot.data;
+                      listOfExpenses.sort((a, b) => b.date.compareTo(a.date));
                       return Container(
                         child: SingleChildScrollView(
                           physics: NeverScrollableScrollPhysics(),
@@ -91,7 +92,6 @@ class ExpensesState extends State<Expenses> {
                                   ),
                                   Positioned(
                                     bottom: 0,
-
                                     left: width * 0.07, // 30,
                                     right: width * 0.07, // 30,
                                     child: Container(
@@ -150,9 +150,13 @@ class ExpensesState extends State<Expenses> {
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: TextStyle(
-                                                            color: Colors
-                                                                    .lightBlue[
-                                                                700], //Colors.indigo[400],
+                                                            color: account
+                                                                        .balance >
+                                                                    0
+                                                                ? Colors.lightBlue[
+                                                                    700]
+                                                                : Colors
+                                                                    .red, //Colors.indigo[400],
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize:

@@ -18,7 +18,7 @@ class DatabaseService {
   final CollectionReference categoryCollection =
       Firestore.instance.collection('Categories');
   final CollectionReference eventCollection =
-      Firestore.instance.collection('Event');            
+      Firestore.instance.collection('Event');
 
   //Handle Account
   Future updateAccount(int balance) async {
@@ -87,11 +87,25 @@ class DatabaseService {
     amount < 0 ? handleBalance(amount, true) : handleBalance(amount, false);
   }
 
+  Future updateCategoryExpenses(String id, int iconCode) async {
+    print("UCE: " + iconCode.toString());
+    await Firestore.instance
+        .collection('Expenses')
+        .where('category', isEqualTo: id)
+        .getDocuments()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.documents) {
+        ds.reference.updateData({'iconCode': iconCode});
+      }
+    });
+  }
+
   Future updateCategory(String id, String name, int iconCode) {
     Firestore.instance
         .collection('Categories')
         .document(id)
         .updateData({'name': name, 'iconCode': iconCode});
+    updateCategoryExpenses(id, iconCode);
   }
 
   Future removeCategory(Category category) {
@@ -188,5 +202,5 @@ class DatabaseService {
         .where('user_id', isEqualTo: uid)
         .snapshots()
         .map(_eventFromSnapshot);
-  }  
+  }
 }
