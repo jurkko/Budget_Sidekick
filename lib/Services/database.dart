@@ -1,6 +1,7 @@
 import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:budget_sidekick/Models/category.dart';
+import 'package:budget_sidekick/Models/event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz_unsafe.dart';
 
@@ -16,6 +17,8 @@ class DatabaseService {
       Firestore.instance.collection('Expenses');
   final CollectionReference categoryCollection =
       Firestore.instance.collection('Categories');
+  final CollectionReference eventCollection =
+      Firestore.instance.collection('Event');            
 
   //Handle Account
   Future updateAccount(int balance) async {
@@ -169,4 +172,21 @@ class DatabaseService {
         .snapshots()
         .map(_expenseFromSnapshot);
   }
+
+  List<Event> _eventFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return Event(
+          name: doc.data['Name'] ?? "",
+          dueDate: doc.data['Duedate'] ?? "",
+          target: doc.data['Target'] ?? 0,
+          current: doc.data['Current'] ?? 0);
+    }).toList();
+  }
+
+  Stream<List<Event>> get event {
+    return expenseCollection
+        .where('user_id', isEqualTo: uid)
+        .snapshots()
+        .map(_eventFromSnapshot);
+  }  
 }
