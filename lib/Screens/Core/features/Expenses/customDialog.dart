@@ -357,7 +357,7 @@ class _CustomDialogState extends State<CustomDialog> {
                   ),
                   backgroundColor: Colors.white,
                   content: Text(
-                    "Pa se JEZUSA bom pokliacu! Koji kurac delas tu brez kategorij?",
+                    "Pa se JEZUSA bom poklicu! Koji kurac delas tu brez kategorij?",
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   actions: <Widget>[
@@ -376,18 +376,14 @@ class _CustomDialogState extends State<CustomDialog> {
             }
           } else {
             //Snapshot doesn't exist
-            return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(width * 0.050)),
-                backgroundColor: Colors.blue,
-                content: Container(
-                    width: double.infinity,
-                    height: height * 0.4665, //300,
-                    color: Colors.blue,
-                    child: SpinKitRing(
-                      color: Colors.white,
-                      size: 100.0,
-                    )));
+            return Container(
+                width: double.infinity,
+                height: height * 0.4665, //300,
+                color: Colors.transparent,
+                child: SpinKitRing(
+                  color: Colors.blue,
+                  size: 100.0,
+                ));
           }
         });
   }

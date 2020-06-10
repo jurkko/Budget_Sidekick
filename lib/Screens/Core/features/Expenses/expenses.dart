@@ -301,14 +301,17 @@ class ExpensesState extends State<Expenses> {
                                               );
                                             });
                                       } else {
-                                        return Container(
-                                            width: double.infinity,
-                                            height: height * 0.55, //300,
-                                            color: Colors.white,
-                                            child: SpinKitRing(
-                                              color: Colors.blue,
-                                              size: 100.0,
-                                            ));
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                              width: double.infinity,
+                                              //300,
+                                              color: Colors.white,
+                                              child: SpinKitRing(
+                                                color: Colors.blue,
+                                                size: 100.0,
+                                              )),
+                                        );
                                       }
                                     }),
                               ))),
