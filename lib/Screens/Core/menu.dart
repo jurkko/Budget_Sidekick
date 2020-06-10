@@ -24,7 +24,7 @@ class _MenuState extends State<Menu> {
     Events(),
     Reminder(),
     Analysis(),
-    Category()
+    Categories()
   ];
   @override
   Widget build(BuildContext context) {

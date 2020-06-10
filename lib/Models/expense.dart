@@ -4,7 +4,7 @@ class Expense {
   String name;
   int amount;
   String category;
-  //DateTime date;
+  DateTime date;
   bool profit;
   Expense(
       {this.id,
@@ -12,5 +12,6 @@ class Expense {
       this.amount,
       this.category,
       this.profit,
-      this.user_id});
+      this.user_id,
+      this.date});
 }

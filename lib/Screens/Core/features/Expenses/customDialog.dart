@@ -14,26 +14,42 @@ class CustomDialog extends StatefulWidget {
 
 class _CustomDialogState extends State<CustomDialog> {
   var formatter = new DateFormat('dd-MM-yyyy');
+  //Fields
+  String name;
+  String amount;
+  String category = 'Other';
+  bool profit = true;
+  int _profit = 1;
+  int preAmount;
+  bool preProfit;
+
+  Color _colorContainer = Colors.green[400];
+  Color _colorTextButtom = Colors.green;
+
   @override
   void initState() {
     super.initState();
     if (widget.e != null) {
       edit = true;
+      _controllerName.text = widget.e.name;
+      _controllerAmount.text = widget.e.amount.toString();
+      profit = widget.e.profit;
+      preProfit = profit;
+      preAmount = widget.e.amount;
+      if (profit) {
+        _profit = 1;
+      } else {
+        _profit = 2;
+        _colorContainer = Colors.red[300];
+        _colorTextButtom = Colors.red[300];
+      }
+      category = widget.e.category;
     } else {
       edit = false;
     }
   }
 
   bool edit;
-  int _profit = 1;
-  Color _colorContainer = Colors.green[400];
-  Color _colorTextButtom = Colors.green;
-
-  //Fields
-  String name;
-  String amount;
-  String category = 'Other';
-  bool profit = true;
 
   TextEditingController _controllerAmount = TextEditingController();
   TextEditingController _controllerName = TextEditingController();
@@ -55,23 +71,22 @@ class _CustomDialogState extends State<CustomDialog> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
+                  textCapitalization: TextCapitalization.sentences,
+                  cursorColor: Colors.white,
                   controller: _controllerName,
                   maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
+                  style: TextStyle(fontSize: width * 0.05, color: Colors.white),
                   keyboardType: TextInputType.text,
                   maxLines: 1,
                   textAlign: TextAlign.start,
                   decoration: new InputDecoration(
-                    //hintText: "descrição",
                     labelText: "Name",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
+                    labelStyle: TextStyle(color: Colors.white),
                     contentPadding: EdgeInsets.only(
                         left: width * 0.04,
                         top: width * 0.041,
                         bottom: width * 0.041,
                         right: width * 0.04),
-
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(width * 0.04),
                       borderSide: BorderSide(
@@ -248,41 +263,23 @@ class _CustomDialogState extends State<CustomDialog> {
                           }
                           name = _controllerName.text;
                           //date = neki
+
                           expense.amount = int.parse(amount);
                           expense.name = name;
                           expense.category = category;
                           expense.profit = profit;
                           expense.user_id = user.uid;
+                          expense.date = DateTime.now();
                           print("ADDING EXPENSE");
                           if (edit) {
+                            expense.id = widget.e.id;
+                            print(expense.id.toString());
                             DatabaseService(uid: user.uid)
-                                .updateExpense(expense);
+                                .updateExpense(expense, preProfit, preAmount);
                           } else {
                             DatabaseService(uid: user.uid).addExpense(expense);
                           }
-                          /*
-                          //mov.data = formatter.format(DateTime.now());
 
-                          if (_profit == 1) {
-                            mov.amount = double.parse(amount);
-                            mov.tipo = "r";
-                            if (widget.mov != null) {
-                              mov.id = widget.mov.id;
-                            }
-                            edit == false
-                                ? _movHelper.saveMovimentacao(mov)
-                                : _movHelper.updateMovimentacao(mov);
-                          }
-                          if (_profit == 2) {
-                            mov.amount = double.parse("-" + amount);
-                            mov.tipo = "d";
-                            if (widget.mov != null) {
-                              mov.id = widget.mov.id;
-                            }
-                            edit == false
-                                ? _movHelper.saveMovimentacao(mov)
-                                : _movHelper.updateMovimentacao(mov);
-                          }*/
                           Navigator.pop(context);
                         }
                       },

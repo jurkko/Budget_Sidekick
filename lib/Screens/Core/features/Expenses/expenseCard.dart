@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/expense.dart';
+import 'package:intl/intl.dart';
 
 class ExpenseCard extends StatelessWidget {
   final Expense expense;
@@ -25,49 +26,55 @@ class ExpenseCard extends StatelessWidget {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                          padding: EdgeInsets.all(width * 0.03),
-                          child: expense.profit == true
-                              ? Icon(
-                                  Icons.arrow_upward,
-                                  color: Colors.green,
-                                  size: width * 0.06,
-                                )
-                              : Icon(Icons.arrow_downward,
-                                  color: Colors.red, size: width * 0.06)),
-                    ),
                     Padding(
-                        padding: EdgeInsets.only(left: width * 0.03),
+                        padding: EdgeInsets.only(left: width * 0.05),
                         child: Container(
-                          width: width * 0.4,
+                          child: Text(
+                            DateFormat('dd.MM.yyy').format(expense.date),
+                            //overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: width * 0.044,
+                            ),
+                          ),
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left: width * 0.02),
+                        child: Container(
+                            child: Icon(
+                          Icons.edit,
+                          color: Colors.grey[600],
+                          size: width * 0.044,
+                        ))),
+                    Padding(
+                        padding: EdgeInsets.only(left: width * 0.02),
+                        child: Container(
                           child: Text(
                             expense.name,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
                             style: TextStyle(
-                              color: expense.profit == true
-                                  ? Colors.green[700]
-                                  : Colors.red[700],
-                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[600],
+                              //fontWeight: FontWeight.bold,
                               fontSize: width * 0.044,
                             ),
                           ),
                         )),
                   ],
                 ),
-                Text(
-                  expense.amount.toString() + "€",
-                  style: TextStyle(
-                    color: expense.profit == true
-                        ? Colors.green[700]
-                        : Colors.red[700],
-                    fontWeight: FontWeight.bold,
-                    fontSize: width * 0.044,
+                Padding(
+                  padding: EdgeInsets.only(right: width * 0.05),
+                  child: Text(
+                    expense.amount.toString() + "€",
+                    style: TextStyle(
+                      color: expense.profit == true
+                          ? Colors.green[700]
+                          : Colors.red[700],
+                      fontWeight: FontWeight.bold,
+                      fontSize: width * 0.044,
+                    ),
                   ),
                 ),
               ],

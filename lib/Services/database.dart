@@ -1,5 +1,7 @@
 import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/expense.dart';
+import 'package:budget_sidekick/Models/category.dart';
+import 'package:budget_sidekick/Models/event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -12,6 +14,10 @@ class DatabaseService {
       Firestore.instance.collection('Accounts');
   final CollectionReference expenseCollection =
       Firestore.instance.collection('Expenses');
+  final CollectionReference categoryCollection =
+      Firestore.instance.collection('Categories');
+  final CollectionReference eventCollection =
+      Firestore.instance.collection('Event');            
 
   //Handle Account (Balance)
   Future updateAccount(int balance) async {
@@ -36,6 +42,32 @@ class DatabaseService {
         .snapshots()
         .map(_accountFromSnapshot);
   }
+  //Categories Services
+
+  List<Category> _categoriesFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return Category(
+          id: doc.documentID,
+          name: doc.data['name'],
+          iconCode: doc.data['icon'],
+          user_id: doc.data['user_id']);
+    }).toList();
+  }
+
+  Stream<List<Category>> get categories {
+    return categoryCollection.snapshots().map(_categoriesFromSnapshot);
+  }
+
+  //Add Category
+  Future addCategory(String name, int iconCode) {
+    Firestore.instance
+        .collection('Categories')
+        .add({'name': name, 'iconCode': iconCode, 'user_id': uid});
+  }
+  //Edit Category
+
+  //Remove Category
+
   //Expenses Services
 
   Future addExpense(Expense expense) {
@@ -44,7 +76,8 @@ class DatabaseService {
       'amount': expense.amount,
       'category': expense.category,
       'profit': expense.profit,
-      'user_id': expense.user_id
+      'user_id': uid,
+      'date': expense.date
     }).whenComplete(() {
       if (expense.profit) {
         handleBalance(expense.amount, true);
@@ -54,12 +87,29 @@ class DatabaseService {
     });
   }
 
-  Future updateExpense(Expense expense) {
+  Future updateExpense(Expense expense, bool preProfit, int preAmount) {
+    bool changingBalance;
+    if (expense.amount == preAmount && expense.profit == preProfit) {
+      changingBalance = false;
+    } else {
+      handleBalance(preAmount, !preProfit);
+      changingBalance = true;
+    }
+
     Firestore.instance.collection('Expenses').document(expense.id).updateData({
       'name': expense.name,
       'amount': expense.amount,
       'category': expense.category,
-      'profit': expense.profit
+      'profit': expense.profit,
+      'date': expense.date
+    }).whenComplete(() {
+      if (changingBalance) {
+        if (expense.profit) {
+          handleBalance(expense.amount, true);
+        } else {
+          handleBalance(expense.amount, false);
+        }
+      }
     });
   }
 
@@ -69,13 +119,16 @@ class DatabaseService {
 
   List<Expense> _expenseFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
+      Timestamp t = doc.data['date'];
+      DateTime d = t.toDate();
       return Expense(
           id: doc.documentID.toString(),
           name: doc.data['name'] ?? '',
           amount: doc.data['amount'] ?? 0,
           category: doc.data['category'] ?? '',
           profit: doc.data['profit'] ?? false,
-          user_id: doc.data['user_id']);
+          user_id: doc.data['user_id'],
+          date: d);
     }).toList();
   }
 
@@ -85,4 +138,21 @@ class DatabaseService {
         .snapshots()
         .map(_expenseFromSnapshot);
   }
+
+  List<Event> _eventFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return Event(
+          name: doc.data['Name'] ?? "",
+          dueDate: doc.data['Duedate'] ?? "",
+          target: doc.data['Target'] ?? 0,
+          current: doc.data['Current'] ?? 0);
+    }).toList();
+  }
+
+  Stream<List<Event>> get event {
+    return expenseCollection
+        .where('user_id', isEqualTo: uid)
+        .snapshots()
+        .map(_eventFromSnapshot);
+  }  
 }
