@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:intl/intl.dart';
+import 'package:budget_sidekick/Services/database.dart';
 
 class ExpenseCard extends StatelessWidget {
   final Expense expense;
@@ -44,7 +45,8 @@ class ExpenseCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: width * 0.02),
                         child: Container(
                             child: Icon(
-                          Icons.edit,
+                          IconData(expense.iconCode,
+                              fontFamily: 'MaterialIcons'),
                           color: Colors.grey[600],
                           size: width * 0.044,
                         ))),

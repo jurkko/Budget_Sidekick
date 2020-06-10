@@ -167,6 +167,7 @@ class ExpensesState extends State<Expenses> {
                                                     right: width * 0.04),
                                                 child: GestureDetector(
                                                   onTap: () {
+                                                    //Check if there are any categories
                                                     _dialogAddExpense();
                                                   },
                                                   child: Container(

@@ -19,8 +19,9 @@ class CategoriesState extends State<Categories> {
   String name;
   IconData icon;
   int iconCode;
-
-  Category deletedCategory;
+  bool edit = false;
+  String updateId;
+  //Category deletedCategory;
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -143,51 +144,78 @@ class CategoriesState extends State<Categories> {
                                   Category c = listOfCategories[index];
                                   return InkWell(
                                     onLongPress: () {
-                                      print("LongPress");
+                                      setState(() {
+                                        _controllerName.text = c.name;
+                                        iconCode = c.iconCode;
+                                        edit = true;
+                                        updateId = c.id;
+                                      });
                                     },
                                     child: Dismissible(
                                       direction: DismissDirection.endToStart,
-                                      onDismissed: (direction) {
-                                        deletedCategory =
-                                            listOfCategories[index];
-                                        setState(() {
-                                          listOfCategories.removeAt(index);
-                                        });
-                                        DatabaseService(uid: user.uid)
-                                            .removeCategory(c);
-                                        final snackBar = SnackBar(
-                                          content: Container(
-                                            padding: EdgeInsets.only(
-                                                bottom: width * 0.025),
-                                            alignment: Alignment.bottomLeft,
-                                            height: height * 0.05,
-                                            child: Text(
-                                              "Category deleted",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  //fontWeight: FontWeight.bold,
-                                                  fontSize: width * 0.05),
-                                            ),
-                                          ),
-                                          duration: Duration(seconds: 2),
-                                          backgroundColor: Colors.blue,
-                                          action: SnackBarAction(
-                                            label: "Undo",
-                                            textColor: Colors.white,
-                                            onPressed: () {
-                                              setState(() {
-                                                listOfCategories.insert(
-                                                    index, deletedCategory);
-                                              });
-                                              DatabaseService(uid: user.uid)
-                                                  .addCategory(
-                                                      deletedCategory.name,
-                                                      deletedCategory.iconCode);
-                                            },
-                                          ),
-                                        );
-                                        _scaffoldKey.currentState
-                                            .showSnackBar(snackBar);
+                                      confirmDismiss: (direction) async {
+                                        final bool res = await showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            width * 0.050)),
+                                                title: Text(
+                                                  "Delete ${listOfCategories[index].name}?",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                                backgroundColor: Colors.blue,
+                                                content: Text(
+                                                  "This will delete all expenses under this category.",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    child: Text(
+                                                      "Cancel",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  FlatButton(
+                                                    child: Text(
+                                                      "Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        listOfCategories
+                                                            .removeAt(index);
+                                                        if (edit) {
+                                                          edit = false;
+                                                          _controllerName
+                                                              .clear();
+                                                          iconCode = null;
+                                                        }
+                                                      });
+                                                      DatabaseService(
+                                                              uid: user.uid)
+                                                          .removeCategory(c);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                        return res;
                                       },
                                       key: ValueKey(c.id),
                                       background: Container(
@@ -220,16 +248,24 @@ class CategoriesState extends State<Categories> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_controllerName.text.isNotEmpty && iconCode != null) {
-            print("Adding Category");
-            DatabaseService(uid: user.uid)
-                .addCategory(_controllerName.text, iconCode);
+            if (edit) {
+              print("Updating Category");
+              DatabaseService(uid: user.uid)
+                  .updateCategory(updateId, _controllerName.text, iconCode);
+            } else {
+              print("Adding Category");
+              DatabaseService(uid: user.uid)
+                  .addCategory(_controllerName.text, iconCode);
+            }
             setState(() {
               iconCode = null;
+              updateId = null;
+              edit = false;
             });
             _controllerName.clear();
           }
         },
-        child: Icon(Icons.add),
+        child: Icon(edit ? Icons.check : Icons.add),
         backgroundColor: Colors.blue,
         tooltip: "Add Category",
       ),
