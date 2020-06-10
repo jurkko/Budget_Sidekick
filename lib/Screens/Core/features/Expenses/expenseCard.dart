@@ -21,7 +21,7 @@ class ExpenseCard extends StatelessWidget {
           child: Container(
             //padding: EdgeInsets.all(width * 0.005),
             width: width,
-            height: height * 0.08,
+            height: height * 0.08321,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

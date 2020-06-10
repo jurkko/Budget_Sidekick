@@ -5,6 +5,7 @@ import 'package:budget_sidekick/Models/category.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:budget_sidekick/Models/user.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class CustomDialog extends StatefulWidget {
   final Expense e;
@@ -59,6 +60,7 @@ class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.width;
     final user = Provider.of<User>(context);
     return StreamBuilder<List<Category>>(
         stream: DatabaseService(uid: user.uid).categories,
@@ -72,7 +74,7 @@ class _CustomDialogState extends State<CustomDialog> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(width * 0.050)),
                   title: Text(
-                    "New Expense",
+                    edit ? "Update Expense" : "New Expense",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.white),
@@ -343,11 +345,49 @@ class _CustomDialogState extends State<CustomDialog> {
                   ));
             } else {
               //No Categories
-              return Text("Kurbas glup, namest da bi kako kategorijo dodal al");
+              return Container(
+                child: AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(width * 0.050)),
+                  title: Text(
+                    "O marija pomagi",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                  ),
+                  backgroundColor: Colors.white,
+                  content: Text(
+                    "Pa se JEZUSA bom pokliacu! Koji kurac delas tu brez kategorij?",
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        "Kurba sm glup",
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              );
             }
           } else {
             //Snapshot doesn't exist
-            return Text("Jeba tole,zglea da ga neki matra");
+            return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(width * 0.050)),
+                backgroundColor: Colors.blue,
+                content: Container(
+                    width: double.infinity,
+                    height: height * 0.4665, //300,
+                    color: Colors.blue,
+                    child: SpinKitRing(
+                      color: Colors.white,
+                      size: 100.0,
+                    )));
           }
         });
   }
