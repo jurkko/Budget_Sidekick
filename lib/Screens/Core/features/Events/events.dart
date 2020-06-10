@@ -65,6 +65,17 @@ class EventsState extends State<Events> {
                                       )),
                                 ),
                                 Positioned(
+                                  top: width * 0.11, //70
+                                  left: width * 0.2, //30,
+                                  child: Text(
+                                    "Events",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: width * 0.06 //30
+                                        ),
+                                  ),
+                                ),
+                                Positioned(
                                   bottom: 0,
                                   left: width * 0.07, // 30,
                                   right: width * 0.07, // 30,
@@ -112,7 +123,8 @@ class EventsState extends State<Events> {
                                               child: Container(
                                                 width: width * 0.6,
                                                 child: Text(
-                                                  (listOfEvents.length.toString()),
+                                                  (listOfEvents.length
+                                                      .toString()),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(

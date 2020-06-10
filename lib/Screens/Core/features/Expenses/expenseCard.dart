@@ -69,7 +69,9 @@ class ExpenseCard extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(right: width * 0.05),
                   child: Text(
-                    expense.amount.toString() + "€",
+                    (expense.profit ? "+" : "-") +
+                        expense.amount.toString() +
+                        "€",
                     style: TextStyle(
                       color: expense.profit == true
                           ? Colors.green[700]

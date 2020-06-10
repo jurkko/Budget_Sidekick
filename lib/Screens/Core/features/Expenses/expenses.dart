@@ -63,7 +63,7 @@ class ExpensesState extends State<Expenses> {
                                 children: <Widget>[
                                   Container(
                                     width: double.infinity,
-                                    height: height * 0.284, //300,
+                                    height: height * 0.334, //300,
                                     color: Colors.white,
                                   ),
                                   Positioned(
@@ -91,7 +91,7 @@ class ExpensesState extends State<Expenses> {
                                   ),
                                   Positioned(
                                     bottom: 0,
-                                    top: width * 0.25,
+
                                     left: width * 0.07, // 30,
                                     right: width * 0.07, // 30,
                                     child: Container(
