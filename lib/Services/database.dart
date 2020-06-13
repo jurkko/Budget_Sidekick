@@ -203,4 +203,14 @@ class DatabaseService {
         .snapshots()
         .map(_eventFromSnapshot);
   }
+
+  Future addEvent(Event event) {
+    Firestore.instance.collection('Event').add({
+      'Name': event.name,
+      'Current': event.current,
+      'Duedate': event.dueDate,
+      'Target': event.target,
+      'user_id': uid
+    });
+  }  
 }

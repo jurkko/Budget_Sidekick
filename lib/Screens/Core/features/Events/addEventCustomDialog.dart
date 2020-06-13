@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/event.dart';
+import 'package:budget_sidekick/Models/user.dart';
+import 'package:provider/provider.dart';
+import 'package:budget_sidekick/Services/database.dart';
+import 'package:intl/intl.dart';
 
 class AddEventCustomDialog extends StatefulWidget {
   final Event e;
@@ -11,7 +15,7 @@ class AddEventCustomDialog extends StatefulWidget {
 class _addEventCustomDialogState extends State<AddEventCustomDialog> {
   // todo actually use dates
   // this shit doesnt actually work yet, keep in mind
-  //var formatter = new DateFormat('dd-MM-yyyy');
+  var formatter = new DateFormat('dd-MM-yyyy');
   @override
   void initState() {
     super.initState();
@@ -23,16 +27,18 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
   }
 
   bool edit;
-  int _profit = 1;
   Color _colorContainer = Colors.blue[400];
   Color _colorTextButtom = Colors.blue;
 
-  TextEditingController _controllerAmount = TextEditingController();
-  TextEditingController _controllerName = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+  TextEditingController _date = new TextEditingController();
+  TextEditingController _controllerName = new TextEditingController();
+  TextEditingController _controllerTarget = new TextEditingController();
+  TextEditingController _controllerCurrent = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
+    final user = Provider.of<User>(context);
     return AlertDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(width * 0.05)),
@@ -49,20 +55,15 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text(
-                    "Name:",
-                    style:
-                        TextStyle(color: Colors.white, fontSize: width * 0.06),
-                  ),
                   Flexible(
                     child: TextField(
-                        controller: _controllerAmount,
+                        controller: _controllerName,
                         //maxLength: 7,
                         style: TextStyle(fontSize: width * 0.05),
                         keyboardType:
                             TextInputType.text,
                         maxLines: 1,
-                        textAlign: TextAlign.end,
+                        textAlign: TextAlign.start,
                         decoration: new InputDecoration(
                           hintText: "Name",
                           hintStyle: TextStyle(color: Colors.white54),
@@ -88,205 +89,117 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
                         )),
                   )
                 ],
-              ),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.datetime,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Date",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
+              ),  
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _date,
+                        keyboardType: TextInputType.datetime,
+                        decoration: InputDecoration(
+                          hintText: "Date of event",
+                          hintStyle: TextStyle(color: Colors.white54),
+                          contentPadding: EdgeInsets.only(
+                              left: width * 0.04,
+                              top: width * 0.041,
+                              bottom: width * 0.041,
+                              right: width * 0.04), //15),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(width * 0.04),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(width * 0.04),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                          ),
                       ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.datetime,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Date",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.datetime,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Date",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.datetime,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Date",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.datetime,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Date",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),
-              TextField(
-                  controller: _controllerName,
-                  maxLength: 20,
-                  style: TextStyle(fontSize: width * 0.05),
-                  keyboardType: TextInputType.datetime,
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Date",
-                    labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
-                    contentPadding: EdgeInsets.only(
-                        left: width * 0.04,
-                        top: width * 0.041,
-                        bottom: width * 0.041,
-                        right: width * 0.04),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * 0.04),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      ),
-                    ),
-                  )),                                                                                          
+                  ),
+                ),
+                ],
+              ),                                                                          
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextField(
+                        controller: _controllerCurrent,
+                        style: TextStyle(fontSize: width * 0.05),
+                        keyboardType:
+                            TextInputType.number,
+                        maxLines: 1,
+                        textAlign: TextAlign.start,
+                        decoration: new InputDecoration(
+                          hintText: "Current progress",
+                          hintStyle: TextStyle(color: Colors.white54),
+                          contentPadding: EdgeInsets.only(
+                              left: width * 0.04,
+                              top: width * 0.041,
+                              bottom: width * 0.041,
+                              right: width * 0.04), //15),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(width * 0.04),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(width * 0.04),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                        )),
+                  )
+                ],
+              ),               
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextField(
+                        controller: _controllerTarget,
+                        style: TextStyle(fontSize: width * 0.05),
+                        keyboardType:
+                            TextInputType.number,
+                        maxLines: 1,
+                        textAlign: TextAlign.start,
+                        decoration: new InputDecoration(
+                          hintText: "Target",
+                          hintStyle: TextStyle(color: Colors.white54),
+                          contentPadding: EdgeInsets.only(
+                              left: width * 0.04,
+                              top: width * 0.041,
+                              bottom: width * 0.041,
+                              right: width * 0.04), //15),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(width * 0.04),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(width * 0.04),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                        )),
+                  )
+                ],
+              ),               
               Padding(
                 padding: EdgeInsets.only(top: width * 0.09),
                 child: Row(
@@ -303,42 +216,26 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        if (_controllerAmount.text.isNotEmpty &&
-                            _controllerName.text.isNotEmpty) {
-                          Event mov = Event();
-                          String amount;
-                          if (_controllerAmount.text.contains(",")) {
-                            amount = _controllerAmount.text
-                                .replaceAll(RegExp(","), ".");
+                        if (_date.text.isNotEmpty &&
+                            _controllerName.text.isNotEmpty && _controllerTarget.text.isNotEmpty) {
+                          Event ev = Event();
+                          ev.name = _controllerName.text;
+                          if (_controllerCurrent.text.isEmpty) {
+                            ev.current = 0;
                           } else {
-                            amount = _controllerAmount.text;
+                            ev.current = double.parse(_controllerCurrent.text);
                           }
-                          /*
-                          //mov.data = formatter.format(DateTime.now());
-                          mov.name = _controllerName.text;
-
-                          if (_profit == 1) {
-                            mov.amount = double.parse(amount);
-                            mov.tipo = "r";
-                            if (widget.mov != null) {
-                              mov.id = widget.mov.id;
-                            }
-                            edit == false
-                                ? _movHelper.saveMovimentacao(mov)
-                                : _movHelper.updateMovimentacao(mov);
-                          }
-                          if (_profit == 2) {
-                            mov.amount = double.parse("-" + amount);
-                            mov.tipo = "d";
-                            if (widget.mov != null) {
-                              mov.id = widget.mov.id;
-                            }
-                            edit == false
-                                ? _movHelper.saveMovimentacao(mov)
-                                : _movHelper.updateMovimentacao(mov);
-                          }*/
+                          ev.target = double.parse(_controllerTarget.text);
+                          ev.dueDate = selectedDate;
+                          ev.uid = user.uid;
+                          print("Insert in db");
+                          if (edit) {
+                          //if edditing
+                          } else {
+                            DatabaseService(uid: user.uid)
+                                .addEvent(ev);
+                          }                          
                           Navigator.pop(context);
-                          //initState();
                         }
                       },
                       child: Container(
@@ -369,4 +266,19 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
           ),
         ));
   }
+
+
+ Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1901, 1),
+        lastDate: DateTime(2100));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        _date.value = TextEditingValue(text: formatter.format(picked));
+      });
+  }
+
 }

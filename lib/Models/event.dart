@@ -1,7 +1,7 @@
 
 class Event {
   String name;
-  String dueDate;
+  DateTime dueDate;
   //this shouldnt be negative anyway
   double target;
   double current;
