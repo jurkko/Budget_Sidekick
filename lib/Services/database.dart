@@ -3,6 +3,7 @@ import 'package:budget_sidekick/Models/expense.dart';
 import 'package:budget_sidekick/Models/category.dart';
 import 'package:budget_sidekick/Models/event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz_unsafe.dart';
 
 class DatabaseService {
   //User ID
@@ -17,16 +18,17 @@ class DatabaseService {
   final CollectionReference categoryCollection =
       Firestore.instance.collection('Categories');
   final CollectionReference eventCollection =
-      Firestore.instance.collection('Event');            
+      Firestore.instance.collection('Event');
 
-  //Handle Account (Balance)
+  //Handle Account
   Future updateAccount(int balance) async {
     return await accountCollection.document(uid).setData({'balance': balance});
   }
 
+  //Handle Balance
   Future handleBalance(int amount, bool profit) async {
     DocumentSnapshot documentSnapshot =
-        await accountCollection.document(uid).get();
+        await Firestore.instance.collection('Accounts').document(uid).get();
     int balance = documentSnapshot.data['balance'];
     profit ? balance = balance + amount : balance = balance - amount;
     return await accountCollection.document(uid).setData({'balance': balance});
@@ -49,7 +51,7 @@ class DatabaseService {
       return Category(
           id: doc.documentID,
           name: doc.data['name'],
-          iconCode: doc.data['icon'],
+          iconCode: doc.data['iconCode'],
           user_id: doc.data['user_id']);
     }).toList();
   }
@@ -64,9 +66,52 @@ class DatabaseService {
         .collection('Categories')
         .add({'name': name, 'iconCode': iconCode, 'user_id': uid});
   }
-  //Edit Category
 
-  //Remove Category
+  //Removes all expenses under a specific Category
+  Future removeCategoryExpenses(String id) async {
+    int amount = 0;
+    await Firestore.instance
+        .collection('Expenses')
+        .where('category', isEqualTo: id)
+        .getDocuments()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.documents) {
+        if (!ds.data['profit']) {
+          amount = amount + ds.data['amount'];
+        } else {
+          amount = amount - ds.data['amount'];
+        }
+        ds.reference.delete();
+      }
+    });
+    amount < 0 ? handleBalance(amount, true) : handleBalance(amount, false);
+  }
+
+  Future updateCategoryExpenses(String id, int iconCode) async {
+    print("UCE: " + iconCode.toString());
+    await Firestore.instance
+        .collection('Expenses')
+        .where('category', isEqualTo: id)
+        .getDocuments()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.documents) {
+        ds.reference.updateData({'iconCode': iconCode});
+      }
+    });
+  }
+
+  Future updateCategory(String id, String name, int iconCode) {
+    Firestore.instance
+        .collection('Categories')
+        .document(id)
+        .updateData({'name': name, 'iconCode': iconCode});
+    updateCategoryExpenses(id, iconCode);
+  }
+
+  Future removeCategory(Category category) {
+    Firestore.instance.collection('Categories').document(category.id).delete();
+    removeCategoryExpenses(category.id);
+  }
 
   //Expenses Services
 
@@ -77,7 +122,8 @@ class DatabaseService {
       'category': expense.category,
       'profit': expense.profit,
       'user_id': uid,
-      'date': expense.date
+      'date': expense.date,
+      'iconCode': expense.iconCode
     }).whenComplete(() {
       if (expense.profit) {
         handleBalance(expense.amount, true);
@@ -101,7 +147,8 @@ class DatabaseService {
       'amount': expense.amount,
       'category': expense.category,
       'profit': expense.profit,
-      'date': expense.date
+      'date': expense.date,
+      'iconCode': expense.iconCode
     }).whenComplete(() {
       if (changingBalance) {
         if (expense.profit) {
@@ -128,6 +175,7 @@ class DatabaseService {
           category: doc.data['category'] ?? '',
           profit: doc.data['profit'] ?? false,
           user_id: doc.data['user_id'],
+          iconCode: doc.data['iconCode'],
           date: d);
     }).toList();
   }
@@ -154,5 +202,5 @@ class DatabaseService {
         .where('user_id', isEqualTo: uid)
         .snapshots()
         .map(_eventFromSnapshot);
-  }  
+  }
 }

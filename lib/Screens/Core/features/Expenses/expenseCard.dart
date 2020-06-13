@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:intl/intl.dart';
+import 'package:budget_sidekick/Services/database.dart';
 
 class ExpenseCard extends StatelessWidget {
   final Expense expense;
@@ -20,7 +21,7 @@ class ExpenseCard extends StatelessWidget {
           child: Container(
             //padding: EdgeInsets.all(width * 0.005),
             width: width,
-            height: height * 0.08,
+            height: height * 0.08321,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -44,7 +45,8 @@ class ExpenseCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: width * 0.02),
                         child: Container(
                             child: Icon(
-                          Icons.edit,
+                          IconData(expense.iconCode,
+                              fontFamily: 'MaterialIcons'),
                           color: Colors.grey[600],
                           size: width * 0.044,
                         ))),
@@ -67,7 +69,9 @@ class ExpenseCard extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(right: width * 0.05),
                   child: Text(
-                    expense.amount.toString() + "€",
+                    (expense.profit ? "+" : "-") +
+                        expense.amount.toString() +
+                        "€",
                     style: TextStyle(
                       color: expense.profit == true
                           ? Colors.green[700]

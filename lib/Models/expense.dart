@@ -6,12 +6,15 @@ class Expense {
   String category;
   DateTime date;
   bool profit;
-  Expense(
-      {this.id,
-      this.name,
-      this.amount,
-      this.category,
-      this.profit,
-      this.user_id,
-      this.date});
+  int iconCode;
+  Expense({
+    this.id,
+    this.name,
+    this.amount,
+    this.category,
+    this.profit,
+    this.user_id,
+    this.date,
+    this.iconCode,
+  });
 }
