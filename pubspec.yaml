@@ -31,13 +31,8 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   intl: ^0.16.1
   flutter_iconpicker: ^2.0.6
-<<<<<<< HEAD
-  snaplist: ^0.1.8
-  sms: ^0.2.0
-
-=======
   flutter_spinkit: ^4.1.2
->>>>>>> ea7c1e824761903eee6ce116e8840b79c20eca23
+  pie_chart: ^3.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

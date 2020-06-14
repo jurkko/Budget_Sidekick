@@ -1,12 +1,13 @@
 import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:budget_sidekick/Models/category.dart';
+import 'package:budget_sidekick/Screens/Core/features/Analysis/Charts/timeChart.dart';
 import 'package:budget_sidekick/Screens/Core/features/Analysis/DataRetrieval/months.dart';
 import 'package:budget_sidekick/Screens/Core/features/Categories/categories.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-
+import 'package:pie_chart/pie_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:budget_sidekick/Models/user.dart';
@@ -27,41 +28,21 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
     double width = MediaQuery.of(context).size.width;
     final user = Provider.of<User>(context);
     final height = MediaQuery.of(context).size.height;
-    var choosenMonth = '5';
+   
+    var choosenMonth = '6';
     var choosenYear = '2020';
 
     List<Expense> listOfExpenses = [];
     List<Category> listOfCategories = [];
 
-    var data = [
-      ClicksPerYear('2016', 12, Colors.red),
-      ClicksPerYear('2017', 42, Colors.yellow),
-      ClicksPerYear('2018', 2, Colors.green),
-    ];
+    final bool animate = false;
 
-    var series = [
-      charts.Series(
-        domainFn: (ClicksPerYear clickData, _) => clickData.year,
-        measureFn: (ClicksPerYear clickData, _) => clickData.clicks,
-        colorFn: (ClicksPerYear clickData, _) => clickData.color,
-        id: 'Clicks',
-        data: data,
-      ),
-    ];
 
-    var chart = charts.BarChart(
-      series,
-      animate: true,
-    );
-
-    var chartWidget = Padding(
-      padding: EdgeInsets.all(32.0),
-      child: SizedBox(
-        height: 200.0,
-        child: chart,
-      ),
-    );
-
+  Map<String, double> dataMap = new Map();
+  dataMap.putIfAbsent("Flutter", () => 5);
+  dataMap.putIfAbsent("React", () => 3);
+  dataMap.putIfAbsent("Xamarin", () => 2);
+  dataMap.putIfAbsent("Ionic", () => 2);
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(width * 0.050)),
@@ -87,9 +68,9 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             listOfCategories = snapshot.data;
-                            Map graphData = toGraphdata(
-                                listOfExpenses, choosenMonth, choosenYear);
-                            print(listOfCategories);
+                            Map<String,double> neki = toGraphdata(listOfCategories, listOfExpenses, choosenMonth, choosenYear);
+
+                        
                             return Container(
                                 child: Column(
                               children: [
@@ -159,6 +140,29 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                                     );
                                   }).toList(),
                                 ),
+                                          PieChart(
+                                  dataMap:dataMap ,
+                                  animationDuration:
+                                      Duration(milliseconds: 800),
+                                  chartLegendSpacing: 32.0,
+                                  chartRadius:
+                                      MediaQuery.of(context).size.width / 2.7,
+                                  showChartValuesInPercentage: true,
+                                  showChartValues: true,
+                                  showChartValuesOutside: false,
+                                  chartValueBackgroundColor: Colors.grey[200],
+                                  showLegends: true,
+                                  legendPosition: LegendPosition.right,
+                                  decimalPlaces: 1,
+                                  showChartValueLabel: true,
+                                  initialAngle: 0,
+                                  chartValueStyle:
+                                      defaultChartValueStyle.copyWith(
+                                    color:
+                                        Colors.blueGrey[900].withOpacity(0.9),
+                                  ),
+                                  chartType: ChartType.disc,
+                                )
 
                                 //return chartWidget
                               ],
@@ -182,14 +186,4 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
           }),
     );
   }
-}
-
-class ClicksPerYear {
-  final String year;
-  final int clicks;
-  final charts.Color color;
-
-  ClicksPerYear(this.year, this.clicks, Color color)
-      : this.color = charts.Color(
-            r: color.red, g: color.green, b: color.blue, a: color.alpha);
 }

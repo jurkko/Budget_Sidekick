@@ -257,24 +257,17 @@ class ExpensesState extends State<Expenses> {
                                                                   width * 0.05),
                                                         ),
                                                       ),
-                                                    ),
-                                                    duration:
-                                                        Duration(seconds: 2),
-                                                    backgroundColor:
-                                                        Colors.blue,
-                                                    action: SnackBarAction(
-                                                      label: "Undo",
-                                                      textColor: Colors.white,
-                                                      onPressed: () {
-                                                   
-                                                        setState(() {
-                                                          listOfExpenses.insert(
-                                                              index,
-                                                              deletedExpense);
-                                                        });
-                                                        DatabaseService(
-                                                                uid: user.uid)
-                                                            .addExpense(
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                      backgroundColor:
+                                                          Colors.blue,
+                                                      action: SnackBarAction(
+                                                        label: "Undo",
+                                                        textColor: Colors.white,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            listOfExpenses.insert(
+                                                                index,
                                                                 deletedExpense);
                                                           });
                                                           DatabaseService(

@@ -1,5 +1,3 @@
-import 'package:budget_sidekick/Models/account.dart';
-import 'package:budget_sidekick/Models/category.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:budget_sidekick/Models/expense.dart';
@@ -30,8 +28,6 @@ class _CustomDialogState extends State<CustomDialog> {
   List<Category> listOfCategories;
   Color _colorContainer = Colors.green[400];
   Color _colorTextButtom = Colors.green;
-
-  List<Category> listOfCategories = [];
 
   @override
   void initState() {
@@ -66,34 +62,6 @@ class _CustomDialogState extends State<CustomDialog> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.width;
     final user = Provider.of<User>(context);
-<<<<<<< HEAD
-    return AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(width * 0.050)),
-        title: Text(
-          "New Expense",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: _colorContainer,
-        content: StreamBuilder<Account>(
-            stream: DatabaseService(uid: user.uid).account,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return StreamBuilder<List<Category>>(
-                    stream: DatabaseService(uid: user.uid).categories,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        listOfCategories = snapshot.data;
-                      } else {
-                           return SizedBox(child: Text("Nimaš kategorij kolega"));
-                      }
-                    });
-              } else {
-                return SizedBox(child: Text("Neki jebejo expensi kolega"));
-              }
-            }));
-=======
     return StreamBuilder<List<Category>>(
         stream: DatabaseService(uid: user.uid).categories,
         builder: (context, snapshot) {
@@ -418,6 +386,5 @@ class _CustomDialogState extends State<CustomDialog> {
                 ));
           }
         });
->>>>>>> ea7c1e824761903eee6ce116e8840b79c20eca23
   }
 }
