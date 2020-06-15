@@ -123,7 +123,8 @@ class DatabaseService {
       'profit': expense.profit,
       'user_id': uid,
       'date': expense.date,
-      'iconCode': expense.iconCode
+      'iconCode': expense.iconCode,
+     
     }).whenComplete(() {
       if (expense.profit) {
         handleBalance(expense.amount, true);

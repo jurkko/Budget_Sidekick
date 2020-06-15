@@ -33,6 +33,7 @@ dependencies:
   flutter_iconpicker: ^2.0.6
   flutter_spinkit: ^4.1.2
   pie_chart: ^3.1.1
+  syncfusion_flutter_charts: ^18.1.56
 dev_dependencies:
   flutter_test:
     sdk: flutter

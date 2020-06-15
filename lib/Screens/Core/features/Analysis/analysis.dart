@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:budget_sidekick/Models/user.dart';
 import 'package:budget_sidekick/Services/database.dart';
 
-import 'Dialogs/monthly.dart';
+import 'Dialogs/monthlyInflow.dart';
+import 'Dialogs/yearlyOutflow.dart';
 
 class Analysis extends StatefulWidget {
   @override
@@ -15,6 +16,9 @@ class Analysis extends StatefulWidget {
 }
 
 class _AnalysisState extends State<Analysis> {
+  
+  List<charts.Series> seriesList;
+  
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -28,6 +32,14 @@ class _AnalysisState extends State<Analysis> {
           context: context,
           builder: (context) {
             return MonthlyAnalysisDialog();
+          });
+    }
+
+       _dialogYearlyAnalysis() {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return YearlyAnalysisDialog();
           });
     }
 
@@ -52,65 +64,91 @@ class _AnalysisState extends State<Analysis> {
                                 children: <Widget>[
                                   Container(
                                     width: double.infinity,
-                                    height: height * 0.25, //300,
-                                    color: Colors.blue,
+                                    height: height * 0.18, //300,
+                                    color: Colors.white,
                                   ),
                                   Positioned(
                                     top: 0,
                                     left: 0,
                                     right: 0,
                                     child: Container(
-                                      width: double.infinity,
-                                      height: height * 0.28, //250,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.blue, //Colors.indigo[400],
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          left: width * 0.05,
-                                          top: width * 0.2,
-                                          bottom: width * 0.02,
-                                        ),
-                                        child: Text(
-                                          'Analysis',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              //fontWeight: FontWeight.bold,
-                                              fontSize: width * 0.1),
-                                        ),
-                                      ),
+                                        width: double.infinity,
+                                        height: height * 0.13, //250,
+                                        decoration: BoxDecoration(
+                                          color:
+                                              Colors.blue, //Colors.indigo[400],
+                                        )),
+                                  ),
+                                  Positioned(
+                                    top: width * 0.11, //70
+                                    left: width * 0.2, //30,
+                                    child: Text(
+                                      "Analysis",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: width * 0.06 //30
+                                          ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.0, vertical: 24.0),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.35,
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: numbers.length,
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Card(
+
+                                GestureDetector(
+                                onTap: () {
+                                  _dialogYearlyAnalysis();
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: width * 0.03,
+                                    bottom: width * 0.05,
+                                  ),
+                                  child: Positioned(
+                                    left: width * 0.5, // 30,
+                                    right: width * 0.07, // 30,
+                                    child: Container(
+                                      height: height * 0.19, //150,
+                                      width: width * 0.85, // 70,
+                                      decoration: BoxDecoration(
                                           color: Colors.blue,
-                                          child: Container(
-                                            child: Center(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.grey[400],
+                                                blurRadius: 5,
+                                                offset: Offset(0, 2))
+                                          ]),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                  top: width * 0.03,
+                                                  left: width * 0.05,
+                                                ),
                                                 child: Text(
-                                              numbers[index].toString(),
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 36.0),
-                                            )),
+                                                  'Yearly expenses',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      //fontWeight: FontWeight.bold,
+                                                      fontSize: width * 0.07),
+                                                ),
+                                              ),
+                                           
+                                            ],
                                           ),
-                                        ),
-                                      );
-                                    }),
+                                          SizedBox(
+                                            height: height * 0.008,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                               GestureDetector(
                                 onTap: () {
@@ -118,7 +156,7 @@ class _AnalysisState extends State<Analysis> {
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                    top: width * 0.1,
+                                    top: width * 0.03,
                                     bottom: width * 0.05,
                                   ),
                                   child: Positioned(
@@ -168,7 +206,6 @@ class _AnalysisState extends State<Analysis> {
                                   ),
                                 ),
                               ),
-                     
                             ],
                           ),
                         ),
