@@ -197,9 +197,9 @@ class RemindersState extends State<Reminders> {
                                 )                                  
                                 ],
                               ),
-                            ),
+                                ]),
                           ),
-                        ],
+                          )],
                       ),
                       Padding(
                           padding: EdgeInsets.only(
