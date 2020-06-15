@@ -32,12 +32,9 @@ dependencies:
   intl: ^0.16.1
   flutter_iconpicker: ^2.0.6
   flutter_spinkit: ^4.1.2
-<<<<<<< HEAD
   pie_chart: ^3.1.1
   syncfusion_flutter_charts: ^18.1.56
-=======
   flutter_local_notifications: ^1.4.4+1
->>>>>>> bf2432fadc4f394682bee3d7e308fa2d3c9149d4
 dev_dependencies:
   flutter_test:
     sdk: flutter
