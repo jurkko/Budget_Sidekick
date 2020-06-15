@@ -57,7 +57,10 @@ class DatabaseService {
   }
 
   Stream<List<Category>> get categories {
-    return categoryCollection.snapshots().map(_categoriesFromSnapshot);
+    return categoryCollection
+        .where('user_id', isEqualTo: uid)
+        .snapshots()
+        .map(_categoriesFromSnapshot);
   }
 
   //Add Category
@@ -88,7 +91,6 @@ class DatabaseService {
   }
 
   Future updateCategoryExpenses(String id, int iconCode) async {
-    print("UCE: " + iconCode.toString());
     await Firestore.instance
         .collection('Expenses')
         .where('category', isEqualTo: id)
@@ -212,5 +214,5 @@ class DatabaseService {
       'Target': event.target,
       'user_id': uid
     });
-  }  
+  }
 }

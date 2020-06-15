@@ -292,7 +292,6 @@ class _CustomDialogState extends State<CustomDialog> {
                                       amount = _controllerAmount.text;
                                     }
                                     name = _controllerName.text;
-                                    //date = neki
 
                                     expense.amount = int.parse(amount);
                                     expense.name = name;
