@@ -31,8 +31,8 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
       edit = true;
       _controllerName.text = widget.e.name;
       _controllerTarget.text = widget.e.target.toString();
-      _controllerTarget.text = widget.e.current.toString();
-      _controllerTarget.text = widget.e.dueDate.toString();
+      _controllerCurrent.text = widget.e.current.toString();
+      _date.text = widget.e.dueDate.toString();
       profit = widget.e.profit;
       preProfit = profit;
       if (profit) {

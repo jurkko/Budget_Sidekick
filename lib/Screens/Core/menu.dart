@@ -6,7 +6,7 @@ import 'package:budget_sidekick/Services/database.dart';
 import 'package:budget_sidekick/screens/core/features/Analysis/analysis.dart';
 import 'package:budget_sidekick/screens/core/features/Events/events.dart';
 import 'package:budget_sidekick/screens/core/features/Expenses/expenses.dart';
-import 'package:budget_sidekick/screens/core/features/Reminder/reminder.dart';
+import 'package:budget_sidekick/screens/core/features/Reminder/reminders.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class _MenuState extends State<Menu> {
   List<Widget> viewList = [
     Expenses(),
     Events(),
-    Reminder(),
+    Reminders(),
     Analysis(),
     Categories()
   ];

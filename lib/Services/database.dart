@@ -2,6 +2,7 @@ import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:budget_sidekick/Models/category.dart';
 import 'package:budget_sidekick/Models/event.dart';
+import 'package:budget_sidekick/Models/reminder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz_unsafe.dart';
 
@@ -19,7 +20,8 @@ class DatabaseService {
       Firestore.instance.collection('Categories');
   final CollectionReference eventCollection =
       Firestore.instance.collection('Event');
-
+  final CollectionReference reminderCollection =
+      Firestore.instance.collection('Reminder');      
   //Handle Account
   Future updateAccount(int balance) async {
     return await accountCollection.document(uid).setData({'balance': balance});
@@ -205,7 +207,7 @@ class DatabaseService {
 
   List<Event> _eventFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      Timestamp t = doc.data['date'];
+      Timestamp t = doc.data['Duedate'];
       DateTime d = t.toDate();
       return Event(
           id: doc.documentID.toString(),
@@ -236,11 +238,46 @@ class DatabaseService {
       'Target': event.target,
       'Profit': event.profit,
       'user_id': uid,
-      'Category': event.category
+      'Category': event.category,
+      'iconCode': event.iconCode
     });
   }
-  
+
   Future removeEvent(Event event) {
     eventCollection.document(event.id).delete();
   }  
+
+  List<Reminder> _reminderFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      Timestamp t = doc.data['Date'];
+      DateTime d = t.toDate();
+      return Reminder(
+          id: doc.documentID.toString(),
+          name: doc.data['Name'] ?? "",
+          message: doc.data['Message'] ?? '',
+          dateOfNotif: d,
+          user_id: doc.data['user_id']
+          );
+    }).toList();
+  }
+
+  Stream<List<Reminder>> get reminder {
+    return reminderCollection
+        .where('user_id', isEqualTo: uid)
+        .snapshots()
+        .map(_reminderFromSnapshot);
+  }
+
+  Future addReminder(Reminder reminder) {
+    reminderCollection.add({
+      'Name': reminder.name,
+      'Message': reminder.message,
+      'Date': reminder.dateOfNotif,
+      'user_id': uid,
+    });
+  }
+  
+  Future removeReminder(Reminder reminder) {
+    reminderCollection.document(reminder.id).delete();
+  }   
 }
