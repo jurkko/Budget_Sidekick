@@ -1,10 +1,23 @@
 
 class Event {
+  String id;
   String name;
   DateTime dueDate;
-  //this shouldnt be negative anyway
+  int iconCode;
+  String category;
   double target;
   double current;
+  bool profit;
   String uid;
-  Event({this.name, this.dueDate, this.target, this.current});
+  Event({
+    this.id, 
+    this.name,
+    this.dueDate,
+    this.target,
+    this.current,
+    this.profit,
+    this.uid, 
+    this.category,
+    this.iconCode,
+    });
 }

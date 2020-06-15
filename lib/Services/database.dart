@@ -102,12 +102,26 @@ class DatabaseService {
     });
   }
 
+  Future updateCategoryEvents(String id, int iconCode) async {
+    await Firestore.instance
+        .collection('Event')
+        .where('Category', isEqualTo: id)
+        .getDocuments()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.documents) {
+        ds.reference.updateData({'iconCode': iconCode});
+      }
+    });
+  }  
+
   Future updateCategory(String id, String name, int iconCode) {
     Firestore.instance
         .collection('Categories')
         .document(id)
         .updateData({'name': name, 'iconCode': iconCode});
     updateCategoryExpenses(id, iconCode);
+    updateCategoryEvents(id, iconCode);
+
   }
 
   Future removeCategory(Category category) {
@@ -191,28 +205,42 @@ class DatabaseService {
 
   List<Event> _eventFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
+      Timestamp t = doc.data['date'];
+      DateTime d = t.toDate();
       return Event(
+          id: doc.documentID.toString(),
           name: doc.data['Name'] ?? "",
-          dueDate: doc.data['Duedate'] ?? "",
+          dueDate: d,
           target: doc.data['Target'] ?? 0,
-          current: doc.data['Current'] ?? 0);
+          current: doc.data['Current'] ?? 0,
+          profit: doc.data['Profit'] ?? false,
+          uid: doc.data['user_id'],
+          category: doc.data['Category'] ?? '',
+          iconCode: doc.data['iconCode']
+          );
     }).toList();
   }
 
   Stream<List<Event>> get event {
-    return expenseCollection
+    return eventCollection
         .where('user_id', isEqualTo: uid)
         .snapshots()
         .map(_eventFromSnapshot);
   }
 
   Future addEvent(Event event) {
-    Firestore.instance.collection('Event').add({
+    eventCollection.add({
       'Name': event.name,
       'Current': event.current,
       'Duedate': event.dueDate,
       'Target': event.target,
-      'user_id': uid
+      'Profit': event.profit,
+      'user_id': uid,
+      'Category': event.category
     });
   }
+  
+  Future removeEvent(Event event) {
+    eventCollection.document(event.id).delete();
+  }  
 }

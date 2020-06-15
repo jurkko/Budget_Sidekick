@@ -1,5 +1,6 @@
 import 'package:budget_sidekick/Models/event.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -10,6 +11,7 @@ class EventCard extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
+    
     return Column(
       children: <Widget>[
         GestureDetector(
@@ -19,55 +21,65 @@ class EventCard extends StatelessWidget {
           child: Container(
             //padding: EdgeInsets.all(width * 0.005),
             width: width,
-            height: height * 0.08,
+            height: height * 0.08321,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                          padding: EdgeInsets.all(width * 0.03),
-                          child: (event.current/event.target) == 1
-                              ? Icon(
-                                  Icons.arrow_upward,
-                                  color: Colors.green,
-                                  size: width * 0.06,
-                                )
-                              : Icon(Icons.arrow_downward,
-                                  color: Colors.blue, size: width * 0.06)),
-                    ),
                     Padding(
-                        padding: EdgeInsets.only(left: width * 0.03),
+                        padding: EdgeInsets.only(left: width * 0.04),
                         child: Container(
-                          width: width * 0.4,
+                            child: Icon(
+                          IconData(event.iconCode,
+                              fontFamily: 'MaterialIcons'),
+                          color: Colors.grey[600],
+                          size: width * 0.054,
+                        ))),
+                    Padding(
+                        padding: EdgeInsets.only(left: width * 0.01),
+                        child: Container(
+                          child: Text(
+                            DateFormat('dd.MM.yyy')
+                                .format(event.dueDate),
+                            //overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: width * 0.035,
+                            ),
+                          ),
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(left: width * 0.02),
+                        child: Container(
                           child: Text(
                             event.name,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
                             style: TextStyle(
-                              color: (event.current/event.target) == 1
-                                  ? Colors.green[700]
-                                  : Colors.blue[700],
-                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[600],
+                              //fontWeight: FontWeight.bold,
                               fontSize: width * 0.044,
                             ),
                           ),
                         )),
                   ],
                 ),
-                Text(
-                  event.current.toString(),
-                  style: TextStyle(
-                    color: (event.current/event.target) == 1
-                        ? Colors.green[700]
-                        : Colors.blue[700],
-                    fontWeight: FontWeight.bold,
-                    fontSize: width * 0.044,
+                Padding(
+                  padding: EdgeInsets.only(right: width * 0.05),
+                  child: Text(
+                    (event.profit ? "+" : "-") +
+                        event.target.toString() +
+                        "€",
+                    style: TextStyle(
+                      color: event.profit == true
+                          ? Colors.green[700]
+                          : Colors.red[700],
+                      fontWeight: FontWeight.bold,
+                      fontSize: width * 0.044,
+                    ),
                   ),
                 ),
               ],
