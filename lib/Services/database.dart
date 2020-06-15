@@ -2,6 +2,7 @@ import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/expense.dart';
 import 'package:budget_sidekick/Models/category.dart';
 import 'package:budget_sidekick/Models/event.dart';
+import 'package:budget_sidekick/Models/reminder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz_unsafe.dart';
 
@@ -19,7 +20,8 @@ class DatabaseService {
       Firestore.instance.collection('Categories');
   final CollectionReference eventCollection =
       Firestore.instance.collection('Event');
-
+  final CollectionReference reminderCollection =
+      Firestore.instance.collection('Reminder');      
   //Handle Account
   Future updateAccount(int balance) async {
     return await accountCollection.document(uid).setData({'balance': balance});
@@ -57,7 +59,10 @@ class DatabaseService {
   }
 
   Stream<List<Category>> get categories {
-    return categoryCollection.snapshots().map(_categoriesFromSnapshot);
+    return categoryCollection
+        .where('user_id', isEqualTo: uid)
+        .snapshots()
+        .map(_categoriesFromSnapshot);
   }
 
   //Add Category
@@ -88,7 +93,6 @@ class DatabaseService {
   }
 
   Future updateCategoryExpenses(String id, int iconCode) async {
-    print("UCE: " + iconCode.toString());
     await Firestore.instance
         .collection('Expenses')
         .where('category', isEqualTo: id)
@@ -100,12 +104,26 @@ class DatabaseService {
     });
   }
 
+  Future updateCategoryEvents(String id, int iconCode) async {
+    await Firestore.instance
+        .collection('Event')
+        .where('Category', isEqualTo: id)
+        .getDocuments()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.documents) {
+        ds.reference.updateData({'iconCode': iconCode});
+      }
+    });
+  }  
+
   Future updateCategory(String id, String name, int iconCode) {
     Firestore.instance
         .collection('Categories')
         .document(id)
         .updateData({'name': name, 'iconCode': iconCode});
     updateCategoryExpenses(id, iconCode);
+    updateCategoryEvents(id, iconCode);
+
   }
 
   Future removeCategory(Category category) {
@@ -190,18 +208,77 @@ class DatabaseService {
 
   List<Event> _eventFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
+      Timestamp t = doc.data['Duedate'];
+      DateTime d = t.toDate();
       return Event(
+          id: doc.documentID.toString(),
           name: doc.data['Name'] ?? "",
-          dueDate: doc.data['Duedate'] ?? "",
+          dueDate: d,
           target: doc.data['Target'] ?? 0,
-          current: doc.data['Current'] ?? 0);
+          current: doc.data['Current'] ?? 0,
+          profit: doc.data['Profit'] ?? false,
+          uid: doc.data['user_id'],
+          category: doc.data['Category'] ?? '',
+          iconCode: doc.data['iconCode']
+          );
     }).toList();
   }
 
   Stream<List<Event>> get event {
-    return expenseCollection
+    return eventCollection
         .where('user_id', isEqualTo: uid)
         .snapshots()
         .map(_eventFromSnapshot);
   }
+
+  Future addEvent(Event event) {
+    eventCollection.add({
+      'Name': event.name,
+      'Current': event.current,
+      'Duedate': event.dueDate,
+      'Target': event.target,
+      'Profit': event.profit,
+      'user_id': uid,
+      'Category': event.category,
+      'iconCode': event.iconCode
+    });
+  }
+
+  Future removeEvent(Event event) {
+    eventCollection.document(event.id).delete();
+  }  
+
+  List<Reminder> _reminderFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      Timestamp t = doc.data['Date'];
+      DateTime d = t.toDate();
+      return Reminder(
+          id: doc.documentID.toString(),
+          name: doc.data['Name'] ?? "",
+          message: doc.data['Message'] ?? '',
+          dateOfNotif: d,
+          user_id: doc.data['user_id']
+          );
+    }).toList();
+  }
+
+  Stream<List<Reminder>> get reminder {
+    return reminderCollection
+        .where('user_id', isEqualTo: uid)
+        .snapshots()
+        .map(_reminderFromSnapshot);
+  }
+
+  Future addReminder(Reminder reminder) {
+    reminderCollection.add({
+      'Name': reminder.name,
+      'Message': reminder.message,
+      'Date': reminder.dateOfNotif,
+      'user_id': uid,
+    });
+  }
+  
+  Future removeReminder(Reminder reminder) {
+    reminderCollection.document(reminder.id).delete();
+  }   
 }

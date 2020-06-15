@@ -181,6 +181,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.6"
+  flutter_local_notifications:
+    dependency: "direct main"
+    description:
+      name: flutter_local_notifications
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.4+1"
+  flutter_local_notifications_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   flutter_spinkit:
     dependency: "direct main"
     description:
@@ -303,6 +317,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0+1"
+<<<<<<< HEAD
   pie_chart:
     dependency: "direct main"
     description:
@@ -317,6 +332,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
+=======
+  platform:
+    dependency: transitive
+    description:
+      name: platform
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.1"
+>>>>>>> bf2432fadc4f394682bee3d7e308fa2d3c9149d4
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -461,6 +485,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "5.4.10"
   url_launcher_macos:
     dependency: transitive
@@ -496,6 +521,8 @@ packages:
       name: vector_math
       url: "https://pub.dartlang.org"
     source: hosted
+=======
+>>>>>>> bf2432fadc4f394682bee3d7e308fa2d3c9149d4
     version: "2.0.8"
 sdks:
   dart: ">=2.7.0 <3.0.0"

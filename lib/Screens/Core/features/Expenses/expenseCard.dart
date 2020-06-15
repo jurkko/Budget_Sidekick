@@ -28,28 +28,29 @@ class ExpenseCard extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     Padding(
-                        padding: EdgeInsets.only(left: width * 0.05),
-                        child: Container(
-                          child: Text(
-                            DateFormat('dd.MM.yyy').format(expense.date),
-                            //overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.bold,
-                              fontSize: width * 0.044,
-                            ),
-                          ),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(left: width * 0.02),
+                        padding: EdgeInsets.only(left: width * 0.04),
                         child: Container(
                             child: Icon(
                           IconData(expense.iconCode,
                               fontFamily: 'MaterialIcons'),
                           color: Colors.grey[600],
-                          size: width * 0.044,
+                          size: width * 0.054,
                         ))),
+                    Padding(
+                        padding: EdgeInsets.only(left: width * 0.01),
+                        child: Container(
+                          child: Text(
+                            DateFormat('dd.MM.yyy  hh:mm ')
+                                .format(expense.date),
+                            //overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: width * 0.035,
+                            ),
+                          ),
+                        )),
                     Padding(
                         padding: EdgeInsets.only(left: width * 0.02),
                         child: Container(

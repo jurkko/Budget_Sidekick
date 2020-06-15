@@ -1,38 +1,67 @@
-import 'package:budget_sidekick/Screens/Core/features/Events/addEventCustomDialog.dart';
+import 'package:budget_sidekick/Screens/Core/features/Reminder/reminderCard.dart';
+import 'package:budget_sidekick/Screens/Core/features/Reminder/addReminderCustomDialog.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:budget_sidekick/Screens/Core/features/Events/eventCard.dart';
 import 'package:budget_sidekick/Screens/Core/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:budget_sidekick/Models/event.dart';
+import 'package:budget_sidekick/Models/reminder.dart';
 import 'package:budget_sidekick/Models/account.dart';
 import 'package:budget_sidekick/Models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:budget_sidekick/Services/database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Events extends StatefulWidget {
-  static const String id = "events";
+class Reminders extends StatefulWidget {
+  static const String id = "reminders";
   @override
-  EventsState createState() => EventsState();
+  RemindersState createState() => RemindersState();
 }
 
-class EventsState extends State<Events> {
+class RemindersState extends State<Reminders> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
-  Event deletedEvent;
-  List<Event> listOfEvents = [];
-  String list_length;
-  _dialogAddEvent() {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<bool> _weekly;
+  Future<bool> _daily;
+  Reminder deletedReminder;
+  List<Reminder> listOfReminders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _weekly= _prefs.then((SharedPreferences prefs) {
+      return (prefs.getBool('weekly') ?? 0);
+    });
+    _daily= _prefs.then((SharedPreferences prefs) {
+      return (prefs.getBool('daily') ?? 0);
+    });
+  }  
+
+  Future<void> _incrementCounter() async {
+    final SharedPreferences prefs = await _prefs;
+    final bool weekly = (prefs.getBool('weekly') ?? 0);
+    final bool daily = (prefs.getBool('daily') ?? 0);
+
+    setState(() {
+      _weekly = prefs.setBool("weekly", weekly).then((bool success) {
+        return weekly;
+      });
+      _daily = prefs.setBool("daily", daily).then((bool success) {
+        return daily;
+      });      
+    });
+  }
+
+  _dialogAddReminder() {
     showDialog(
         context: context,
         builder: (context) {
-          return AddEventCustomDialog();
+          return AddReminderCustomDialog();
         });
   }
-  _dialogEditEvent(Event ev) {
+  _dialogEditReminder(Reminder reminder) {
     showDialog(
         context: context,
         builder: (context) {
-          return AddEventCustomDialog(e: ev);
+          return AddReminderCustomDialog(re: reminder);
         });
   }  
 
@@ -48,7 +77,6 @@ class EventsState extends State<Events> {
         stream: DatabaseService(uid: user.uid).account,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print('Events num '+ listOfEvents.length.toString());
               return Container(
                 child: SingleChildScrollView(
                   physics: NeverScrollableScrollPhysics(),
@@ -76,7 +104,7 @@ class EventsState extends State<Events> {
                             top: width * 0.11, //70
                             left: width * 0.2, //30,
                             child: Text(
-                              "Expenses",
+                              "Reminders",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: width * 0.06 //30
@@ -111,13 +139,13 @@ class EventsState extends State<Events> {
                                       bottom: width * 0.02,
                                     ),
                                     child: Text(
-                                      "Number of events",
+                                      "Number of reminders",
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: width * 0.05),
                                     ),
                                   ),
-                                  Row(
+                                Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     mainAxisAlignment:
@@ -130,48 +158,43 @@ class EventsState extends State<Events> {
                                           bottom: width * 0.02,
                                         ),
                                         child: Text(
-                                          listOfEvents.length.toString(),
+                                          listOfReminders.length.toString(),
                                           style: TextStyle(
                                               color: Colors.grey[600],
                                               fontSize: width * 0.05),
                                         ),
+                                      ),                                  
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: width * 0.04),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      //Check if there are any categories
+                                      _dialogAddReminder();
+                                    },
+                                    child: Container(
+                                      width: width * 0.12,
+                                      height: width * 0.12, //65,
+                                      decoration: BoxDecoration(
+                                          color: Colors.lightBlue[
+                                              700], //Colors.indigo[400],
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 7,
+                                              offset: Offset(2, 2),
+                                            )
+                                          ]),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: width * 0.07,
+                                        color: Colors.white,
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            right: width * 0.04),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            //Check if there are any categories
-                                            _dialogAddEvent();
-                                          },
-                                          child: Container(
-                                            width: width * 0.12,
-                                            height: width * 0.12, //65,
-                                            decoration: BoxDecoration(
-                                                color: Colors.lightBlue[
-                                                    700], //Colors.indigo[400],
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey,
-                                                    blurRadius: 7,
-                                                    offset: Offset(2, 2),
-                                                  )
-                                                ]),
-                                            child: Icon(
-                                              Icons.add,
-                                              size: width * 0.07,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: height * 0.008,
-                                  )
+                                )                                  
                                 ],
                               ),
                             ),
@@ -190,37 +213,35 @@ class EventsState extends State<Events> {
                               child: MediaQuery.removePadding(
                                 removeTop: true,
                                 context: context,
-                                child: StreamBuilder<List<Event>>(
+                                child: StreamBuilder<List<Reminder>>(
                                     stream:
-                                        DatabaseService(uid: user.uid).event,
+                                        DatabaseService(uid: user.uid).reminder,
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        listOfEvents = snapshot.data;
-
-                                        listOfEvents.sort(
-                                            (a, b) => b.dueDate.compareTo(a.dueDate));
+                                        listOfReminders = snapshot.data;
+                                        listOfReminders.sort(
+                                            (a, b) => b.dateOfNotif.compareTo(a.dateOfNotif));
                                         return ListView.builder(
-                                            itemCount: listOfEvents.length,
+                                            itemCount: listOfReminders.length,
                                             itemBuilder: (context, index) {
-                                              Event e = listOfEvents[index];
+                                              Reminder e = listOfReminders[index];
                                               return InkWell(
                                                 onLongPress: () {
-                                                  _dialogEditEvent(e);
+                                                  _dialogEditReminder(e);
                                                 },
                                                 child: Dismissible(
                                                   direction: DismissDirection
                                                       .endToStart,
                                                   onDismissed: (direction) {
-                                                    deletedEvent =
-                                                        listOfEvents[index];
+                                                    deletedReminder =
+                                                        listOfReminders[index];
                                                     setState(() {
-                                                      listOfEvents
+                                                      listOfReminders
                                                           .removeAt(index);
                                                     });
-                                                    print(e.uid);
                                                     DatabaseService(
                                                             uid: user.uid)
-                                                        .removeEvent(e);
+                                                        .removeReminder(e);
                                                     final snackBar = SnackBar(
                                                       content: Container(
                                                         padding:
@@ -231,7 +252,7 @@ class EventsState extends State<Events> {
                                                             .bottomLeft,
                                                         height: height * 0.05,
                                                         child: Text(
-                                                          "Expense deleted",
+                                                          "Reminder deleted",
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.white,
@@ -249,14 +270,14 @@ class EventsState extends State<Events> {
                                                         textColor: Colors.white,
                                                         onPressed: () {
                                                           setState(() {
-                                                            listOfEvents.insert(
+                                                            listOfReminders.insert(
                                                                 index,
-                                                                deletedEvent);
+                                                                deletedReminder);
                                                           });
                                                           DatabaseService(
                                                                   uid: user.uid)
-                                                              .addEvent(
-                                                                  deletedEvent);
+                                                              .addReminder(
+                                                                  deletedReminder);
                                                         },
                                                       ),
                                                     );
@@ -277,9 +298,9 @@ class EventsState extends State<Events> {
                                                       size: width * 0.07,
                                                     ),
                                                   ),
-                                                  child: EventCard(
-                                                    event: e,
-                                                  ),
+                                                   child: ReminderCard(
+                                                     reminder: e,
+                                                   ),
                                                 ),
                                               );
                                             });
@@ -303,11 +324,11 @@ class EventsState extends State<Events> {
                 ),
               );
           } else {
-            print(snapshot);
             return Loading();
           }
         }),
     );
   }
 }
+
 
