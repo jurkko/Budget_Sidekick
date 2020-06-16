@@ -25,7 +25,7 @@ class _AnalysisState extends State<Analysis> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
-    final List<int> numbers = [1, 2, 3, 5, 8, 13, 21, 34, 55];
+
 
     _dialogMonthlyAnalysis() {
       showDialog(

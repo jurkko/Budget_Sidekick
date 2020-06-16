@@ -3,12 +3,15 @@ import 'package:budget_sidekick/Models/user.dart';
 import 'package:budget_sidekick/Screens/Core/features/Categories/categories.dart';
 import 'package:budget_sidekick/Services/auth.dart';
 import 'package:budget_sidekick/Services/database.dart';
+
 import 'package:budget_sidekick/screens/core/features/Analysis/analysis.dart';
 import 'package:budget_sidekick/screens/core/features/Events/events.dart';
 import 'package:budget_sidekick/screens/core/features/Expenses/expenses.dart';
 import 'package:budget_sidekick/screens/core/features/Reminder/reminders.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'features/Mail/Mail.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -24,8 +27,10 @@ class _MenuState extends State<Menu> {
     Events(),
     Reminders(),
     Analysis(),
-    Categories()
+    Categories(),
+    Mail()
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,6 +161,11 @@ class MyDrawer extends StatelessWidget {
                       leading: Icon(Icons.list),
                       title: Text('Categories'),
                       onTap: () => onTap(context, 4),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.send),
+                      title: Text('Mail'),
+                      onTap: () => onTap(context, 5),
                     ),
                   ],
                 )));
