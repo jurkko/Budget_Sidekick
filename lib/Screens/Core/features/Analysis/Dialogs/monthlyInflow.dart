@@ -20,13 +20,25 @@ class MonthlyAnalysisDialog extends StatefulWidget {
 }
 
 class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
+  Color _colorContainer = Colors.green[400];
+  bool profit = true;
+  int _profit = 1;
+  int i = 0;
+  String choosenMonth = 'June';
+  String choosenYear = '2020';
+  String type = 'Inflow';
+  bool dataShownInPercentages = true;
+
   @override
   void initState() {
     super.initState();
+    if (profit) {
+      _profit = 1;
+    } else {
+      _profit = 2;
+      _colorContainer = Colors.red[300];
+    }
   }
-
-  String choosenMonth;
-  String choosenYear;
 
   List<String> listOfMonths = [
     'January',
@@ -56,10 +68,10 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(width * 0.050)),
       title: Text(
-        "Inflow analysis",
+        type + " analysis",
         textAlign: TextAlign.center,
       ),
-      backgroundColor: Colors.green,
+      backgroundColor: _colorContainer,
       content: StreamBuilder<Account>(
           stream: DatabaseService(uid: user.uid).account,
           builder: (context, snapshot) {
@@ -76,73 +88,94 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                         stream: DatabaseService(uid: user.uid).categories,
                         builder: (context, snapshot) {
                           listOfCategories = snapshot.data;
-                          var neki = toGraphdataMonthly(listOfCategories,
-                              listOfExpenses, choosenMonth, choosenYear);
+                          var neki = toGraphdataMonthly(
+                              listOfCategories,
+                              listOfExpenses,
+                              choosenMonth,
+                              choosenYear,
+                              profit);
 
                           Map<String, double> map = neki.map(
                               (a, b) => MapEntry(a as String, b as double));
                           if (snapshot.hasData && map.isNotEmpty) {
                             return Container(
-                                height: height * 0.5,
+                                height: height * 0.6,
                                 child: Column(
                                   children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(top: height * 0.03),
+                                    ),
+                                    Center(
+                                      child: Text('Choose the desired month:'),
+                                    ),
                                     Row(
                                       mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        DropdownButton<String>(
-                                          value: choosenMonth,
-                                          onChanged: (String newValue) {
-                                            setState(() {
-                                              choosenMonth = newValue;
-                                            });
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          underline: Container(
-                                            height: 1,
-                                            color: Colors.white,
+                                        Theme(
+                                          data: Theme.of(context).copyWith(
+                                              canvasColor: _colorContainer),
+                                          child: DropdownButton<String>(
+                                            value: choosenMonth,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                choosenMonth = newValue;
+                                              });
+                                            },
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15),
+                                            underline: Container(),
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black,
+                                            ),
+                                            items: listOfMonths
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
                                           ),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.white,
-                                          ),
-                                          items: listOfMonths
-                                              .map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
                                         ),
-                                        DropdownButton<String>(
-                                          value: choosenYear,
-                                          onChanged: (String newValue) {
-                                            setState(() {
-                                              choosenYear = newValue;
-                                            });
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          underline: Container(
-                                            height: 1,
-                                            color: Colors.white,
+                                        Theme(
+                                          data: Theme.of(context).copyWith(
+                                              canvasColor: _colorContainer),
+                                          child: DropdownButton<String>(
+                                            value: choosenYear,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                choosenYear = newValue;
+                                              });
+                                            },
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15),
+                                            underline: Container(),
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black,
+                                            ),
+                                            items: <String>[
+                                              '2019',
+                                              '2020',
+                                            ].map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
                                           ),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.white,
-                                          ),
-                                          items: <String>[
-                                            '2019',
-                                            '2020',
-                                          ].map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
                                         ),
                                       ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: height * 0.02),
                                     ),
 
                                     PieChart(
@@ -153,7 +186,8 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                                       chartRadius:
                                           MediaQuery.of(context).size.width /
                                               2.7,
-                                      showChartValuesInPercentage: false,
+                                      showChartValuesInPercentage:
+                                          dataShownInPercentages,
                                       showChartValues: true,
                                       showChartValuesOutside: false,
                                       chartValueBackgroundColor:
@@ -169,7 +203,89 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                                             .withOpacity(0.9),
                                       ),
                                       chartType: ChartType.disc,
-                                    )
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Radio(
+                                          activeColor: Colors.green[900],
+                                          value: 1,
+                                          groupValue: _profit,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              profit = true;
+                                              _profit = value;
+                                              _colorContainer =
+                                                  Colors.green[400];
+                                              type = 'Inflow';
+                                            });
+                                          },
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: width * 0.01),
+                                          child: Text("Inflow"),
+                                        ),
+                                        Radio(
+                                          activeColor: Colors.red[900],
+                                          value: 2,
+                                          groupValue: _profit,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              profit = false;
+                                              _profit = value;
+                                              _colorContainer = Colors.red[300];
+                                              type = 'Outflow';
+                                            });
+                                          },
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: width * 0.01),
+                                          child: Text("Outflow"),
+                                        )
+                                      ],
+                                    ),
+                                     Padding(
+                                      padding:
+                                          EdgeInsets.only(top: height * 0.03),
+                                    ),
+                                    Column(
+                                      children: [
+                                        Center(
+                                          child:
+                                              Text('Show data in percentages:'),
+                                        ),
+                                        Theme(
+                                          data: Theme.of(context).copyWith(
+                                              canvasColor: _colorContainer),
+                                          child: DropdownButton<bool>(
+                                            value: dataShownInPercentages,
+                                            onChanged: (bool newValue) {
+                                              setState(() {
+                                                dataShownInPercentages =
+                                                    newValue;
+                                              });
+                                            },
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15),
+                                            underline: Container(),
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black,
+                                            ),
+                                            items: <bool>[true, false]
+                                                .map<DropdownMenuItem<bool>>(
+                                                    (bool value) {
+                                              return DropdownMenuItem<bool>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
 
                                     //return chartWidget
                                   ],

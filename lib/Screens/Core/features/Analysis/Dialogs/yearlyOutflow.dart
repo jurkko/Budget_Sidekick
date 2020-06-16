@@ -22,25 +22,28 @@ class YearlyAnalysisDialog extends StatefulWidget {
 }
 
 class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  String choosenYear;
-
+  bool profit = true;
+  int _profit = 1;
+  Color _colorContainer = Colors.green[400];
   List<charts.Series> seriesList;
   List<MonthlyExpense> neki;
   List<String> listOfYears = ['2018', '2019', '2020'];
   List<Expense> listOfExpenses = [];
   List<Category> listOfCategories = [];
+  String type = 'Inflow';
 
-  List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    if (profit) {
+      _profit = 1;
+    } else {
+      _profit = 2;
+      _colorContainer = Colors.red[300];
+    }
+  }
 
-  bool showAvg = false;
+  String choosenYear = '2020';
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +55,10 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(width * 0.050)),
       title: Text(
-        "Inflow analysis",
+        type + " analysis",
         textAlign: TextAlign.center,
       ),
-      backgroundColor: Colors.green,
+      backgroundColor: _colorContainer,
       content: StreamBuilder<Account>(
           stream: DatabaseService(uid: user.uid).account,
           builder: (context, snapshot) {
@@ -73,60 +76,84 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
                         builder: (context, snapshot) {
                           listOfCategories = snapshot.data;
 
-                          neki = toGraphdataYearly(
-                              listOfCategories, listOfExpenses, choosenYear);
-                              
+                          neki = toGraphdataYearly(listOfCategories,
+                              listOfExpenses, choosenYear, profit);
+
                           //seriesList = populateChart(neki);
 
                           if (snapshot.hasData) {
                             return Container(
-                                height: height * 0.6,
+                                height: height * 0.65,
                                 child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        DropdownButton<String>(
-                                          value: choosenYear,
-                                          onChanged: (String newValue) {
-                                            setState(() {
-                                              choosenYear = newValue;
-                                            });
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          underline: Container(
-                                            height: 1,
-                                            color: Colors.white,
+                                        Theme(
+                                          data: Theme.of(context).copyWith(canvasColor: _colorContainer),
+                                          child: DropdownButton<String>(
+                                            value: choosenYear,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                choosenYear = newValue;
+                                              });
+                                            },
+                                            style:
+                                                TextStyle(color: Colors.black,fontSize: 20),
+                                            underline: Container(
+                                              height: 1,
+                                              color: Colors.black,
+                                            ),
+                                           
+                                            items: <String>[
+                                              '2019',
+                                              '2020',
+                                            ].map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
                                           ),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.white,
-                                          ),
-                                          items: <String>[
-                                            '2019',
-                                            '2020',
-                                          ].map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
                                         ),
                                       ],
                                     ),
                                     Center(
                                         child: Container(
                                             child: SfCartesianChart(
+                                                title: ChartTitle(
+                                                    text: 'Yearly ' + type),
+                                                tooltipBehavior:
+                                                    TooltipBehavior(
+                                                        enable: true,
+                                                        header: 'Monthly'),
                                                 // Initialize category axis
-                                                primaryXAxis: CategoryAxis(),
+                                                primaryXAxis: CategoryAxis(
+                                                    title: AxisTitle(
+                                                        text: 'Months',
+                                                        textStyle:
+                                                            ChartTextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Roboto',
+                                                                fontSize: 16,
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .italic,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300))),
+
+                                                //primaryYAxis: LogarithmicAxis(),
                                                 series: <
                                                     LineSeries<MonthlyExpense,
                                                         String>>[
-                                          LineSeries<MonthlyExpense,
-                                              String>(
+                                          LineSeries<MonthlyExpense, String>(
                                             // Bind data source
+                                            enableTooltip: true,
                                             dataSource: neki,
                                             xValueMapper:
                                                 (MonthlyExpense sales, _) =>
@@ -134,8 +161,59 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
                                             yValueMapper:
                                                 (MonthlyExpense sales, _) =>
                                                     sales.amount,
+                                            markerSettings: MarkerSettings(
+                                                isVisible: true,
+                                                // Marker shape is set to diamond
+                                                shape: DataMarkerType.diamond),
+                                            dataLabelSettings:
+                                                DataLabelSettings(
+                                              isVisible: true,
+                                              // Positioning the data label
+                                              useSeriesColor: true,
+                                            ),
                                           )
-                                        ])))
+                                        ]))),
+                                    Row(
+                                      children: <Widget>[
+                                        Radio(
+                                          activeColor: Colors.green[900],
+                                          value: 1,
+                                          groupValue: _profit,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              profit = true;
+                                              _profit = value;
+                                              _colorContainer =
+                                                  Colors.green[400];
+                                              type = 'Inflow';
+                                            });
+                                          },
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: width * 0.01),
+                                          child: Text("Inflow"),
+                                        ),
+                                        Radio(
+                                          activeColor: Colors.red[900],
+                                          value: 2,
+                                          groupValue: _profit,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              profit = false;
+                                              _profit = value;
+                                              _colorContainer = Colors.red[300];
+                                              type = 'Outflow';
+                                            });
+                                          },
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: width * 0.01),
+                                          child: Text("Outflow"),
+                                        )
+                                      ],
+                                    ),
 
                                     //return chartWidget
                                   ],

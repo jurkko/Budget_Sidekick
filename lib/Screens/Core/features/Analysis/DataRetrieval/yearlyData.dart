@@ -11,12 +11,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 List<MonthlyExpense> toGraphdataYearly(
-    listOfCategories, listOfExpensesUnfiltered, year) {
-  List<Expense> listOfExpenses = filterData(listOfExpensesUnfiltered, year);
+    listOfCategories, listOfExpensesUnfiltered, year, profit) {
+  List<Expense> listOfExpenses =
+      filterData(listOfExpensesUnfiltered, year, profit);
 
   List<MonthlyExpense> graphData2 = fillLIstWithMonths();
-  print(graphData2);
 
+  print(profit);
   for (var j = 0; j < listOfExpenses.length; j++) {
     Expense tempExpense = listOfExpenses[j];
     DateTime date = tempExpense.date;
@@ -28,13 +29,45 @@ List<MonthlyExpense> toGraphdataYearly(
       }
     }
   }
+  graphData2 = shrotSwitchForRename(graphData2);
+  return graphData2;
+}
 
+List<MonthlyExpense> shrotSwitchForRename(graphData2) {
+  for (var i = 0; i < graphData2.length; i++) {
+    MonthlyExpense temp = graphData2[i];
+    if (temp.month == '1') {
+      temp.month = 'January';
+    } else if (temp.month == '2') {
+      temp.month = 'February';
+    } else if (temp.month == '3') {
+      temp.month = 'March';
+    } else if (temp.month == '4') {
+      temp.month = 'April';
+    } else if (temp.month == '5') {
+      temp.month = 'May';
+    } else if (temp.month == '6') {
+      temp.month = 'June';
+    } else if (temp.month == '7') {
+      temp.month = 'July';
+    } else if (temp.month == '8') {
+      temp.month = 'August';
+    } else if (temp.month == '9') {
+      temp.month = 'September';
+    } else if (temp.month == '10') {
+      temp.month = 'October';
+    } else if (temp.month == '11') {
+      temp.month = 'November';
+    } else if (temp.month == '12') {
+      temp.month = 'December';
+    }
+  }
   return graphData2;
 }
 
 List<MonthlyExpense> fillLIstWithMonths() {
   List<MonthlyExpense> tempList = [];
-  for (var i = 0; i <= 12; i++) {
+  for (var i = 1; i <= 12; i++) {
     var temp = new MonthlyExpense();
     temp.month = i.toString();
 
@@ -44,7 +77,7 @@ List<MonthlyExpense> fillLIstWithMonths() {
   return tempList;
 }
 
-List<Expense> filterData(listOfExpensesUnfiltered, year) {
+List<Expense> filterData(listOfExpensesUnfiltered, year, profit) {
   List<Expense> listOfExpenses = [];
   for (var j = 0; j < listOfExpensesUnfiltered.length; j++) {
     Expense tempExpense = listOfExpensesUnfiltered[j];
@@ -52,7 +85,7 @@ List<Expense> filterData(listOfExpensesUnfiltered, year) {
     DateTime date = tempExpense.date;
     String dateYear = date.year.toString();
 
-    if (dateYear == year && tempExpense.profit == true) {
+    if (dateYear == year && tempExpense.profit == profit) {
       listOfExpenses.add(tempExpense);
     }
   }
