@@ -76,6 +76,8 @@ class RemindersState extends State<Reminders> {
     else{
         await flutterLocalNotificationsPlugin.cancelAll(); 
         doDailyNotification(daily); 
+        scheduleFewReminders(listOfReminders);
+
       }
   }
 
@@ -99,6 +101,7 @@ class RemindersState extends State<Reminders> {
     else{
         await flutterLocalNotificationsPlugin.cancelAll();  
         doWeeklyNotification(weekly);
+        scheduleFewReminders(listOfReminders);
     }
   }  
 
@@ -136,6 +139,28 @@ class RemindersState extends State<Reminders> {
       prefs.setBool('daily', enabled);
       doDailyNotification(enabled);
   }  
+  void scheduleFewReminders(List<Reminder> reminders) async {
+    if(reminders.isNotEmpty){
+      if(reminders.length <= 5){
+        for (Reminder re in reminders){
+          var scheduledNotificationDateTime = re.dateOfNotif;
+          var androidPlatformChannelSpecifics =
+              AndroidNotificationDetails('your other channel id',
+                  'your other channel name', 'your other channel description');
+          var iOSPlatformChannelSpecifics =
+              IOSNotificationDetails();
+          NotificationDetails platformChannelSpecifics = NotificationDetails(
+              androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+          await flutterLocalNotificationsPlugin.schedule(
+              0,
+              re.name,
+              re.message,
+              scheduledNotificationDateTime,
+              platformChannelSpecifics);          
+        }
+      }
+    }
+  }    
 
   @override
   Widget build(BuildContext context) {
@@ -308,6 +333,7 @@ class RemindersState extends State<Reminders> {
                                         listOfReminders = snapshot.data;
                                         listOfReminders.sort(
                                             (a, b) => b.dateOfNotif.compareTo(a.dateOfNotif));
+                                        scheduleFewReminders(listOfReminders);
                                         return ListView.builder(
                                             itemCount: listOfReminders.length,
                                             itemBuilder: (context, index) {
