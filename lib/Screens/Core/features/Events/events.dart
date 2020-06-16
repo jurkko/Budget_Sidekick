@@ -48,7 +48,7 @@ class EventsState extends State<Events> {
         stream: DatabaseService(uid: user.uid).account,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print('Events num '+ listOfEvents.length.toString());
+             print('=== data ===: ${snapshot.data}');
               return Container(
                 child: SingleChildScrollView(
                   physics: NeverScrollableScrollPhysics(),
@@ -67,7 +67,7 @@ class EventsState extends State<Events> {
                             right: 0,
                             child: Container(
                                 width: double.infinity,
-                                height: height * 0.28, //250,
+                                height: height * 0.14, //250,
                                 decoration: BoxDecoration(
                                   color: Colors.blue, //Colors.indigo[400],
                                 )),
@@ -76,7 +76,7 @@ class EventsState extends State<Events> {
                             top: width * 0.11, //70
                             left: width * 0.2, //30,
                             child: Text(
-                              "Expenses",
+                              "Events",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: width * 0.06 //30
@@ -84,98 +84,36 @@ class EventsState extends State<Events> {
                             ),
                           ),
                           Positioned(
-                            bottom: 0,
-                            left: width * 0.07, // 30,
-                            right: width * 0.07, // 30,
-                            child: Container(
-                              height: height * 0.16, //150,
-                              width: width * 0.1, // 70,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey[400],
-                                        blurRadius: 5,
-                                        offset: Offset(0, 2))
-                                  ]),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: width * 0.06,
-                                      top: width * 0.04,
-                                      bottom: width * 0.02,
-                                    ),
-                                    child: Text(
-                                      "Number of events",
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: width * 0.05),
-                                    ),
-                                  ),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: width * 0.06,
-                                          top: width * 0.04,
-                                          bottom: width * 0.02,
-                                        ),
-                                        child: Text(
-                                          listOfEvents.length.toString(),
-                                          style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: width * 0.05),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            right: width * 0.04),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            //Check if there are any categories
-                                            _dialogAddEvent();
-                                          },
-                                          child: Container(
-                                            width: width * 0.12,
-                                            height: width * 0.12, //65,
-                                            decoration: BoxDecoration(
-                                                color: Colors.lightBlue[
-                                                    700], //Colors.indigo[400],
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey,
-                                                    blurRadius: 7,
-                                                    offset: Offset(2, 2),
-                                                  )
-                                                ]),
-                                            child: Icon(
-                                              Icons.add,
-                                              size: width * 0.07,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
+                            top: width * 0.17, //70
+                            left: width * 0.83, //30,                            
+                            child: GestureDetector(
+                              onTap: () {
+                                //Check if there are any categories
+                                _dialogAddEvent();
+                              },
+                              child: Container(
+                                width: width * 0.12,
+                                height: width * 0.12, //65,
+                                decoration: BoxDecoration(
+                                    color: Colors.lightGreen[
+                                        700], //Colors.indigo[400],
+                                    borderRadius:
+                                        BorderRadius.circular(50),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 7,
+                                        offset: Offset(2, 2),
                                       )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height * 0.008,
-                                  )
-                                ],
+                                    ]),
+                                child: Icon(
+                                  Icons.add,
+                                  size: width * 0.07,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
+                          ),                          
                         ],
                       ),
                       Padding(
@@ -196,6 +134,7 @@ class EventsState extends State<Events> {
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         listOfEvents = snapshot.data;
+                                        print('=== data ===: ${snapshot.data}');
 
                                         listOfEvents.sort(
                                             (a, b) => b.dueDate.compareTo(a.dueDate));
@@ -231,7 +170,7 @@ class EventsState extends State<Events> {
                                                             .bottomLeft,
                                                         height: height * 0.05,
                                                         child: Text(
-                                                          "Expense deleted",
+                                                          "Event deleted",
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.white,
@@ -283,6 +222,33 @@ class EventsState extends State<Events> {
                                                 ),
                                               );
                                             });
+                                        GestureDetector(
+                                          onTap: () {
+                                            //Check if there are any categories
+                                            _dialogAddEvent();
+                                          },
+                                          child: Container(
+                                            width: width * 0.12,
+                                            height: width * 0.12, //65,
+                                            decoration: BoxDecoration(
+                                                color: Colors.lightBlue[
+                                                    700], //Colors.indigo[400],
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey,
+                                                    blurRadius: 7,
+                                                    offset: Offset(2, 2),
+                                                  )
+                                                ]),
+                                            child: Icon(
+                                              Icons.add,
+                                              size: width * 0.07,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        );                                         
                                       } else {
                                         return Padding(
                                           padding: const EdgeInsets.all(8.0),
@@ -303,7 +269,7 @@ class EventsState extends State<Events> {
                 ),
               );
           } else {
-            print(snapshot);
+
             return Loading();
           }
         }),

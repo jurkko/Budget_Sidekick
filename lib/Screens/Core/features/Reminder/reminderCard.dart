@@ -31,7 +31,7 @@ class ReminderCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: width * 0.01),
                         child: Container(
                           child: Text(
-                            DateFormat('dd.MM.yyy  hh:mm')
+                            DateFormat('dd.MM.yyy')
                                 .format(reminder.dateOfNotif),
                             //overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,

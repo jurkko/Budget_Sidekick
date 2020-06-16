@@ -25,21 +25,20 @@ class _AddReminderCustomDialogState extends State<AddReminderCustomDialog> {
       edit = true;
       _controllerName.text = widget.re.name;
       _controllerMessage.text = widget.re.message.toString();
-      _date.text = widget.re.dateOfNotif.toString();
+      _date.value = TextEditingValue(text: formatter.format(widget.re.dateOfNotif));
     } else {
       edit = false;
     }
   }
 
   bool edit;
-  Color _colorContainer = Colors.green[400];
-  Color _colorTextButtom = Colors.green;
+  Color _colorContainer = Colors.blue[400];
+  Color _colorTextButtom = Colors.blue;
 
   DateTime selectedDate = DateTime.now();
   TextEditingController _date = new TextEditingController();
   TextEditingController _controllerName = new TextEditingController();
   TextEditingController _controllerMessage= new TextEditingController();
-  TextEditingController _controllerCurrent = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
