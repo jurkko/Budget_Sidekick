@@ -32,9 +32,11 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
       _controllerName.text = widget.e.name;
       _controllerTarget.text = widget.e.target.toString();
       _controllerCurrent.text = widget.e.current.toString();
-      _date.text = widget.e.dueDate.toString();
+      _date.value = TextEditingValue(text: formatter.format(widget.e.dueDate));
       profit = widget.e.profit;
       preProfit = profit;
+      initialCat = widget.e.category;
+      iconCode = widget.e.iconCode;
       if (profit) {
         _profit = 1;
       } else {
@@ -42,8 +44,6 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
         _colorContainer = Colors.red[300];
         _colorTextButtom = Colors.red[300];
       }
-      initialCat = widget.e.category;
-      iconCode = widget.e.iconCode;
     } else {
       edit = false;
     }
@@ -70,7 +70,7 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
             if (snapshot.data.length != 0) {
               listOfCategories = snapshot.data;
               initialCat = initialCat ?? listOfCategories[0].id;
-              iconCode = iconCode ?? listOfCategories[0].iconCode;    
+              iconCode = iconCode ?? listOfCategories[0].iconCode;   
               return AlertDialog(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(width * 0.05)),
@@ -208,7 +208,7 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
                                   maxLines: 1,
                                   textAlign: TextAlign.start,
                                   decoration: new InputDecoration(
-                                    hintText: "Target",
+                                    hintText: "Goal",
                                     hintStyle: TextStyle(color: Colors.white54),
                                     contentPadding: EdgeInsets.only(
                                         left: width * 0.04,
@@ -364,7 +364,12 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
                                     ev.category = initialCat;
                                     print("Insert in db");
                                     if (edit) {
-                                    //if edditing
+                                      ev.dueDate = widget.e.dueDate;
+                                      ev.id = widget.e.id;
+                                      print(ev.id.toString());
+                                      DatabaseService(uid: user.uid)
+                                          .updateEvent(
+                                              ev);
                                     } else {
                                       DatabaseService(uid: user.uid)
                                           .addEvent(ev);

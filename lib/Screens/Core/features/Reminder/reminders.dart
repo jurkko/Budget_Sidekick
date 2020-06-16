@@ -1,5 +1,6 @@
 import 'package:budget_sidekick/Screens/Core/features/Reminder/reminderCard.dart';
 import 'package:budget_sidekick/Screens/Core/features/Reminder/addReminderCustomDialog.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:budget_sidekick/Screens/Core/loading.dart';
 import 'package:flutter/material.dart';
@@ -19,35 +20,99 @@ class Reminders extends StatefulWidget {
 class RemindersState extends State<Reminders> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+  var initialisationSettingAndroid;
+  var initialisationSettingIOS;
+  var initialisationSettings;
+
+
+  
   Future<bool> _weekly;
   Future<bool> _daily;
+  bool weekly;
+  bool daily;
   Reminder deletedReminder;
   List<Reminder> listOfReminders = [];
 
   @override
   void initState() {
     super.initState();
-    _weekly= _prefs.then((SharedPreferences prefs) {
+    _weekly = _prefs.then((SharedPreferences prefs) {
       return (prefs.getBool('weekly') ?? 0);
     });
-    _daily= _prefs.then((SharedPreferences prefs) {
+    _daily = _prefs.then((SharedPreferences prefs) {
       return (prefs.getBool('daily') ?? 0);
-    });
+    });  
+    initialisationSettingAndroid = new AndroidInitializationSettings('app_icon'); 
+    initialisationSettingIOS = new IOSInitializationSettings( onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    initialisationSettings = new InitializationSettings((initialisationSettingAndroid), initialisationSettingIOS);
+    flutterLocalNotificationsPlugin.initialize(initialisationSettings, onSelectNotification: onSelectNotification);
+ 
+  }
+
+  Future onSelectNotification(String payload) async {
+  }
+
+  Future doWeeklyNotification(bool enabled) async {
+    if(weekly){
+    var time = Time(12, 0, 0);
+    var androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('show weekly channel id',
+            'show weekly channel name', 'show weekly description');
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
+        0,
+        'Budget Sidekick',
+        'Your expenses and events are waiting for you!',
+        Day.Sunday,
+        time,
+        platformChannelSpecifics);
+        }
+    else{
+        await flutterLocalNotificationsPlugin.cancelAll(); 
+        doDailyNotification(daily); 
+        scheduleFewReminders(listOfReminders);
+
+      }
+  }
+
+  Future doDailyNotification(bool enabled) async {
+    if(enabled){
+      var time = Time(17, 40, 0);
+      var androidPlatformChannelSpecifics =
+          AndroidNotificationDetails('repeatDailyAtTime channel id',
+              'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
+      var iOSPlatformChannelSpecifics =
+          IOSNotificationDetails();
+      var platformChannelSpecifics = NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      await flutterLocalNotificationsPlugin.showDailyAtTime(
+          0,
+          'Budget Sidekick',
+          'Your Daily expense report is waiting',
+          time,
+          platformChannelSpecifics);
+    }
+    else{
+        await flutterLocalNotificationsPlugin.cancelAll();  
+        doWeeklyNotification(weekly);
+        scheduleFewReminders(listOfReminders);
+    }
   }  
 
-  Future<void> _incrementCounter() async {
-    final SharedPreferences prefs = await _prefs;
-    final bool weekly = (prefs.getBool('weekly') ?? 0);
-    final bool daily = (prefs.getBool('daily') ?? 0);
+  Future onDidReceiveLocalNotification(int id, String title, String body, String payload) async{}
 
-    setState(() {
-      _weekly = prefs.setBool("weekly", weekly).then((bool success) {
-        return weekly;
-      });
-      _daily = prefs.setBool("daily", daily).then((bool success) {
-        return daily;
-      });      
-    });
+  Future<bool> getPrefValue(String prefsKey) async {
+      var prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool(prefsKey) == null){
+          return true;
+      }
+      return prefs.getBool(prefsKey);
   }
 
   _dialogAddReminder() {
@@ -64,6 +129,38 @@ class RemindersState extends State<Reminders> {
           return AddReminderCustomDialog(re: reminder);
         });
   }  
+  void weeklyNotifications(bool enabled) async{
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setBool('weekly', enabled);
+      doWeeklyNotification(enabled);
+  }
+  void dailyNotifications(bool enabled) async{
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setBool('daily', enabled);
+      doDailyNotification(enabled);
+  }  
+  void scheduleFewReminders(List<Reminder> reminders) async {
+    if(reminders.isNotEmpty){
+      if(reminders.length <= 5){
+        for (Reminder re in reminders){
+          var scheduledNotificationDateTime = re.dateOfNotif;
+          var androidPlatformChannelSpecifics =
+              AndroidNotificationDetails('your other channel id',
+                  'your other channel name', 'your other channel description');
+          var iOSPlatformChannelSpecifics =
+              IOSNotificationDetails();
+          NotificationDetails platformChannelSpecifics = NotificationDetails(
+              androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+          await flutterLocalNotificationsPlugin.schedule(
+              0,
+              re.name,
+              re.message,
+              scheduledNotificationDateTime,
+              platformChannelSpecifics);          
+        }
+      }
+    }
+  }    
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +207,13 @@ class RemindersState extends State<Reminders> {
                                   fontSize: width * 0.06 //30
                                   ),
                             ),
-                          ),
+                          ),                                                     
                           Positioned(
                             bottom: 0,
                             left: width * 0.07, // 30,
-                            right: width * 0.07, // 30,
+                            right: width * 0.17, // 30,
                             child: Container(
-                              height: height * 0.16, //150,
+                              height: height * 0.2, //150,
                               width: width * 0.1, // 70,
                               decoration: BoxDecoration(
                                   color: Colors.white,
@@ -135,71 +232,86 @@ class RemindersState extends State<Reminders> {
                                   Padding(
                                     padding: EdgeInsets.only(
                                       left: width * 0.06,
-                                      top: width * 0.04,
+                                      top: width * 0.0,
                                       bottom: width * 0.02,
                                     ),
-                                    child: Text(
-                                      "Number of reminders",
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: width * 0.05),
-                                    ),
-                                  ),
-                                Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: width * 0.06,
-                                          top: width * 0.04,
-                                          bottom: width * 0.02,
-                                        ),
-                                        child: Text(
-                                          listOfReminders.length.toString(),
-                                          style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: width * 0.05),
-                                        ),
-                                      ),                                  
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      right: width * 0.04),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      //Check if there are any categories
-                                      _dialogAddReminder();
-                                    },
-                                    child: Container(
-                                      width: width * 0.12,
-                                      height: width * 0.12, //65,
-                                      decoration: BoxDecoration(
-                                          color: Colors.lightBlue[
-                                              700], //Colors.indigo[400],
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              blurRadius: 7,
-                                              offset: Offset(2, 2),
-                                            )
-                                          ]),
-                                      child: Icon(
-                                        Icons.add,
-                                        size: width * 0.07,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                )                                  
+                                  ), 
+                                FutureBuilder<bool>(
+                                    future: getPrefValue("weekly"),
+                                    builder: (context, AsyncSnapshot<bool> snapshot) {
+                                        if (snapshot.hasData){
+                                          return SwitchListTile(
+                                            value: snapshot.data,
+                                            title: Text("Enable weekly notifications"),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                
+                                              weekly = value;
+                                              weeklyNotifications(value);
+                                              });
+                                            },
+                                          );
+                                        } else{
+                                            return Container();
+                                        }
+
+                                    }
+                                ), 
+                                FutureBuilder<bool>(
+                                    future: getPrefValue("daily"),
+                                    builder: (context, AsyncSnapshot<bool> snapshot) {
+                                        if (snapshot.hasData){
+                                          return SwitchListTile(
+                                            value: snapshot.data,
+                                            title: Text("Enable daily notifications"),
+                                            onChanged: (value) {
+                                              setState(() {
+                                              daily = value;
+                                              dailyNotifications(value);
+                                              });
+                                            },
+                                          );
+                                        } else{
+                                            return Container();
+                                        }
+
+                                    }
+                                ),                                                                                                                                     
                                 ],
                               ),
-                                ]),
                           ),
-                          )],
+                          ),
+                          Positioned(
+                            top: width * 0.40, //70
+                            left: width * 0.84, //30,                            
+                            child: GestureDetector(
+                              onTap: () {
+                                //Check if there are any categories
+                                _dialogAddReminder();
+                              },
+                              child: Container(
+                                width: width * 0.12,
+                                height: width * 0.12, //65,
+                                decoration: BoxDecoration(
+                                    color: Colors.lightGreen[
+                                        700], //Colors.indigo[400],
+                                    borderRadius:
+                                        BorderRadius.circular(50),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 7,
+                                        offset: Offset(2, 2),
+                                      )
+                                    ]),
+                                child: Icon(
+                                  Icons.add,
+                                  size: width * 0.07,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),                          ],
                       ),
                       Padding(
                           padding: EdgeInsets.only(
@@ -221,6 +333,7 @@ class RemindersState extends State<Reminders> {
                                         listOfReminders = snapshot.data;
                                         listOfReminders.sort(
                                             (a, b) => b.dateOfNotif.compareTo(a.dateOfNotif));
+                                        scheduleFewReminders(listOfReminders);
                                         return ListView.builder(
                                             itemCount: listOfReminders.length,
                                             itemBuilder: (context, index) {

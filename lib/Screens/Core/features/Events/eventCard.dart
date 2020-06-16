@@ -66,7 +66,7 @@ class EventCard extends StatelessWidget {
                           ),
                         )),
                   ],
-                ),
+                ),               
                 Padding(
                   padding: EdgeInsets.only(right: width * 0.05),
                   child: Text(

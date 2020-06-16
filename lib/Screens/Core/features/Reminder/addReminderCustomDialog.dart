@@ -25,21 +25,20 @@ class _AddReminderCustomDialogState extends State<AddReminderCustomDialog> {
       edit = true;
       _controllerName.text = widget.re.name;
       _controllerMessage.text = widget.re.message.toString();
-      _date.text = widget.re.dateOfNotif.toString();
+      _date.value = TextEditingValue(text: formatter.format(widget.re.dateOfNotif));
     } else {
       edit = false;
     }
   }
 
   bool edit;
-  Color _colorContainer = Colors.green[400];
-  Color _colorTextButtom = Colors.green;
+  Color _colorContainer = Colors.blue[400];
+  Color _colorTextButtom = Colors.blue;
 
   DateTime selectedDate = DateTime.now();
   TextEditingController _date = new TextEditingController();
   TextEditingController _controllerName = new TextEditingController();
   TextEditingController _controllerMessage= new TextEditingController();
-  TextEditingController _controllerCurrent = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -193,17 +192,20 @@ class _AddReminderCustomDialogState extends State<AddReminderCustomDialog> {
                                 onTap: () {
                                   if (_date.text.isNotEmpty &&
                                       _controllerName.text.isNotEmpty && _controllerMessage.text.isNotEmpty) {
-                                    Reminder ev = Reminder();
-                                    ev.name = _controllerName.text;
-                                    ev.message = _controllerMessage.text;
-                                    ev.dateOfNotif = selectedDate;
-                                    ev.user_id = user.uid;
+                                    Reminder re = Reminder();
+                                    re.name = _controllerName.text;
+                                    re.message = _controllerMessage.text;
+                                    re.dateOfNotif = selectedDate;
+                                    re.user_id = user.uid;
                                     print("Insert in db");
                                     if (edit) {
-                                    //if edditing
+                                    re.dateOfNotif = widget.re.dateOfNotif;
+                                    re.id = widget.re.id;
+                                    DatabaseService(uid: user.uid)
+                                          .updateReminder(re);
                                     } else {
                                       DatabaseService(uid: user.uid)
-                                          .addReminder(ev);
+                                          .addReminder(re);
                                     }                          
                                     Navigator.pop(context);
                                   }
