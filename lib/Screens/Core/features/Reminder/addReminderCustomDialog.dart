@@ -192,17 +192,20 @@ class _AddReminderCustomDialogState extends State<AddReminderCustomDialog> {
                                 onTap: () {
                                   if (_date.text.isNotEmpty &&
                                       _controllerName.text.isNotEmpty && _controllerMessage.text.isNotEmpty) {
-                                    Reminder ev = Reminder();
-                                    ev.name = _controllerName.text;
-                                    ev.message = _controllerMessage.text;
-                                    ev.dateOfNotif = selectedDate;
-                                    ev.user_id = user.uid;
+                                    Reminder re = Reminder();
+                                    re.name = _controllerName.text;
+                                    re.message = _controllerMessage.text;
+                                    re.dateOfNotif = selectedDate;
+                                    re.user_id = user.uid;
                                     print("Insert in db");
                                     if (edit) {
-                                    //if edditing
+                                    re.dateOfNotif = widget.re.dateOfNotif;
+                                    re.id = widget.re.id;
+                                    DatabaseService(uid: user.uid)
+                                          .updateReminder(re);
                                     } else {
                                       DatabaseService(uid: user.uid)
-                                          .addReminder(ev);
+                                          .addReminder(re);
                                     }                          
                                     Navigator.pop(context);
                                   }

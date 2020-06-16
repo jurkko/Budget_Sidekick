@@ -248,6 +248,18 @@ class DatabaseService {
     eventCollection.document(event.id).delete();
   }  
 
+  Future updateEvent(Event event) {
+    Firestore.instance.collection('Event').document(event.id).updateData({
+      'Name': event.name,
+      'Category': event.category,
+      'DueDate': event.dueDate,
+      'Current': event.current,
+      'Target': event.target,
+      'Profit': event.profit,
+      'iconCode': event.iconCode,
+    });
+  }    
+
   List<Reminder> _reminderFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       Timestamp t = doc.data['Date'];
@@ -281,4 +293,12 @@ class DatabaseService {
   Future removeReminder(Reminder reminder) {
     reminderCollection.document(reminder.id).delete();
   }   
+
+  Future updateReminder(Reminder reminder) {
+    Firestore.instance.collection('Reminder').document(reminder.id).updateData({
+      'Name': reminder.name,
+      'Message': reminder.message,
+      'Date': reminder.dateOfNotif,
+    });
+  }  
 }

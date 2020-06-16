@@ -364,11 +364,12 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
                                     ev.category = initialCat;
                                     print("Insert in db");
                                     if (edit) {
+                                      ev.dueDate = widget.e.dueDate;
                                       ev.id = widget.e.id;
                                       print(ev.id.toString());
-                                      // DatabaseService(uid: user.uid)
-                                      //     .updateEvent(
-                                      //         ev, preProfit);
+                                      DatabaseService(uid: user.uid)
+                                          .updateEvent(
+                                              ev);
                                     } else {
                                       DatabaseService(uid: user.uid)
                                           .addEvent(ev);
