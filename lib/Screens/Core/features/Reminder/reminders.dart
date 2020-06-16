@@ -57,7 +57,7 @@ class RemindersState extends State<Reminders> {
 
   Future doWeeklyNotification(bool enabled) async {
     if(weekly){
-    var time = Time(5, 11, 0);
+    var time = Time(12, 0, 0);
     var androidPlatformChannelSpecifics =
         AndroidNotificationDetails('show weekly channel id',
             'show weekly channel name', 'show weekly description');
@@ -69,7 +69,7 @@ class RemindersState extends State<Reminders> {
         0,
         'Budget Sidekick',
         'Your expenses and events are waiting for you!',
-        Day.Monday,
+        Day.Sunday,
         time,
         platformChannelSpecifics);
         }
