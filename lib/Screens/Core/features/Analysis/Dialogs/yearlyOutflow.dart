@@ -57,6 +57,7 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
       title: Text(
         type + " analysis",
         textAlign: TextAlign.center,
+        
       ),
       backgroundColor: _colorContainer,
       content: StreamBuilder<Account>(
@@ -91,7 +92,8 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Theme(
-                                          data: Theme.of(context).copyWith(canvasColor: _colorContainer),
+                                          data: Theme.of(context).copyWith(
+                                              canvasColor: _colorContainer),
                                           child: DropdownButton<String>(
                                             value: choosenYear,
                                             onChanged: (String newValue) {
@@ -99,13 +101,13 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
                                                 choosenYear = newValue;
                                               });
                                             },
-                                            style:
-                                                TextStyle(color: Colors.black,fontSize: 20),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20),
                                             underline: Container(
                                               height: 1,
                                               color: Colors.black,
                                             ),
-                                           
                                             items: <String>[
                                               '2019',
                                               '2020',
@@ -131,21 +133,7 @@ class _YearlyAnalysisDialogState extends State<YearlyAnalysisDialog> {
                                                         header: 'Monthly'),
                                                 // Initialize category axis
                                                 primaryXAxis: CategoryAxis(
-                                                    title: AxisTitle(
-                                                        text: 'Months',
-                                                        textStyle:
-                                                            ChartTextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontFamily:
-                                                                    'Roboto',
-                                                                fontSize: 16,
-                                                                fontStyle:
-                                                                    FontStyle
-                                                                        .italic,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w300))),
+                                                  ),
 
                                                 //primaryYAxis: LogarithmicAxis(),
                                                 series: <

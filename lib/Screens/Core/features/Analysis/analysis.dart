@@ -39,7 +39,11 @@ class _AnalysisState extends State<Analysis> {
     'November',
     'December'
   ];
+
+  //Expense e = new Expense(id:'nawfahfpwšjfowa',category:'x3GiHfbcQDRTLGLYaF85',date:DateTime.now(),iconCode: 58688, name: 'test', profit: true, user_id: 'v6F2SwT0tiazagS0ciWy4SkEs892');
+  
   List<Expense> listOfExpenses = [];
+  
   List<Expense> listOfExpensesTable = [];
   @override
   Widget build(BuildContext context) {
@@ -69,6 +73,7 @@ class _AnalysisState extends State<Analysis> {
           stream: DatabaseService(uid: user.uid).account,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+          
               Account account = snapshot.data;
               return StreamBuilder<List<Expense>>(
                   stream: DatabaseService(uid: user.uid).expenses,
@@ -125,34 +130,37 @@ class _AnalysisState extends State<Analysis> {
                                         "Choose the time:",
                                         style: TextStyle(
                                             color: Colors.grey[600],
-                                            fontSize: width * 0.05),
+                                            fontSize: width * 0.055),
                                       ),
                                       Theme(
                                         data: Theme.of(context).copyWith(
                                             canvasColor: Colors.white),
-                                        child: DropdownButton<String>(
-                                          value: choosenMonth,
-                                          onChanged: (String newValue) {
-                                            setState(() {
-                                              choosenMonth = newValue;
-                                            });
-                                          },
-                                          style: TextStyle(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 3),
+                                          child: DropdownButton<String>(
+                                            value: choosenMonth,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                choosenMonth = newValue;
+                                              });
+                                            },
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: width * 0.05),
+                                            underline: Container(),
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
                                               color: Colors.black,
-                                              fontSize: width * 0.045),
-                                          underline: Container(),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.black,
+                                            ),
+                                            items: listOfMonths
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
                                           ),
-                                          items: listOfMonths
-                                              .map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
                                         ),
                                       ),
                                       Theme(
@@ -167,7 +175,7 @@ class _AnalysisState extends State<Analysis> {
                                           },
                                           style: TextStyle(
                                               color: Colors.black,
-                                              fontSize: width * 0.045),
+                                              fontSize: width * 0.05),
                                           underline: Container(),
                                           icon: Icon(
                                             Icons.arrow_drop_down,
@@ -236,21 +244,25 @@ class _AnalysisState extends State<Analysis> {
                                         label: Text(
                                           'Name:',
                                           style: TextStyle(
-                                              fontStyle: FontStyle.italic),
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 15),
                                         ),
                                       ),
                                       DataColumn(
                                         label: Text(
                                           'Amount:',
                                           style: TextStyle(
-                                              fontStyle: FontStyle.italic),
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 15), 
+                                            
                                         ),
                                       ),
                                       DataColumn(
                                         label: Text(
-                                          'Date',
+                                          'Date:',
                                           style: TextStyle(
-                                              fontStyle: FontStyle.italic),
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 15),
                                         ),
                                       ),
                                     ],
@@ -339,7 +351,7 @@ class _AnalysisState extends State<Analysis> {
                                                           color: Colors.white,
                                                           //fontWeight: FontWeight.bold,
                                                           fontSize:
-                                                              width * 0.04),
+                                                              width * 0.035),
                                                     ),
                                                   ),
                                                 ],
@@ -423,12 +435,12 @@ class _AnalysisState extends State<Analysis> {
                                                       right: width * 0.025,
                                                     ),
                                                     child: Text(
-                                                      'Analyze your yearly expenses ',
+                                                      'Analyze your monthly expenses ',
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           //fontWeight: FontWeight.bold,
                                                           fontSize:
-                                                              width * 0.04),
+                                                              width * 0.035),
                                                     ),
                                                   ),
                                                 ],

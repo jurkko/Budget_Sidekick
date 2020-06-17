@@ -39,6 +39,7 @@ dependencies:
   permission_handler: ^5.0.0
   contacts_service: ^0.4.6
   mailer: ^3.0.3
+  fluttertoast: ^4.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -14,6 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 List<Event> listOfEvents = [];
 
@@ -31,7 +32,7 @@ class MailState extends State<Mail> {
   String initialEvent;
   String initialeEventName;
   String mailRecipient;
-   final recipientController = TextEditingController();
+  final recipientController = TextEditingController();
   //Future<Iterable<Contact>> contacts = getContacts();
 
   @override
@@ -56,20 +57,20 @@ class MailState extends State<Mail> {
                         children: <Widget>[
                           Container(
                             width: double.infinity,
-                            height: height * 0.5, //300
+                            height: height * 0.45, //300
                             color: Colors.blue,
                           ),
-                          Positioned(
+                          /*       Positioned(
                             top: 0,
                             left: 0,
                             right: 0,
                             child: Container(
                                 width: double.infinity,
-                                height: height * 0.28, //250,
+                                height: height * 0.29, //250,
                                 decoration: BoxDecoration(
                                   color: Colors.blue, //Colors.indigo[400],
                                 )),
-                          ),
+                          ), */
                           Positioned(
                             top: width * 0.11, //70
                             left: width * 0.2, //30,
@@ -109,11 +110,6 @@ class MailState extends State<Mail> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(left: width * 0.05),
-                                        child: Container(),
-                                      ),
                                       Padding(
                                         padding: EdgeInsets.only(
                                           left: width * 0.06,
@@ -211,11 +207,11 @@ class MailState extends State<Mail> {
                                       ),
                                     ),
                                   ),
-                                  
                                   Center(
                                     child: TextField(
-                                      controller: recipientController,
-                                        style: TextStyle(fontSize: width * 0.05),
+                                        controller: recipientController,
+                                        style:
+                                            TextStyle(fontSize: width * 0.05),
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         maxLines: 1,
@@ -248,17 +244,18 @@ class MailState extends State<Mail> {
                                         )),
                                   ),
                                   Padding(
-                                    padding:
-                                        EdgeInsets.only(left: width*0.6),
+                                    padding: EdgeInsets.only(
+                                        left: width * 0.64,
+                                        bottom: width * 0.03),
                                     child: GestureDetector(
                                       onTap: () {
-                                        mailRecipient=recipientController.text;
-                                        sendMail(mailRecipient,initialEvent);
-                                       
+                                        mailRecipient =
+                                            recipientController.text;
+                                        sendMail(mailRecipient, initialEvent);
                                       },
                                       child: Container(
-                                        width: width * 0.12,
-                                        height: width * 0.12, //65,
+                                        width: width * 0.15,
+                                        height: width * 0.15, //65,
                                         decoration: BoxDecoration(
                                             color: Colors.lightBlue[
                                                 700], //Colors.indigo[400],
@@ -273,7 +270,7 @@ class MailState extends State<Mail> {
                                             ]),
                                         child: Icon(
                                           Icons.send,
-                                          size: width * 0.07,
+                                          size: width * 0.09,
                                           color: Colors.white,
                                         ),
                                       ),
@@ -296,7 +293,7 @@ class MailState extends State<Mail> {
     );
   }
 
-  Future<void> sendMail(mailRecipient,initialEvent) async {
+  Future<void> sendMail(mailRecipient, initialEvent) async {
     String username = 'BudgetSidekick@gmail.com';
     String password = 'BudgetSidekick123';
 
@@ -304,20 +301,34 @@ class MailState extends State<Mail> {
 
     final message = Message()
       ..from = Address(username)
-      ..recipients.add(mailRecipient) 
-      
+      ..recipients.add(mailRecipient)
       ..subject = 'I am notifing you about incoming event '
-      ..text =
-          'Name of event\ni'+initialEvent+''; 
+      ..text = 'Name of event\ni' + initialEvent + '';
 
     try {
       final sendReport = await send(message, smtpServer);
-      print('Message sent: ' +
-          sendReport.toString()); 
+      print('Message sent: ' + sendReport.toString());
+      Fluttertoast.showToast(
+        msg: "E-mail was sent succesfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.white,
+        textColor: Colors.blue,
+        fontSize: 20.0,
+        
+    );
     } on MailerException catch (e) {
-      print('Message not sent. \n' +
-          e.toString()); 
-    
+      print('Message not sent. \n' + e.toString());
+      Fluttertoast.showToast(
+        msg: "Tehre was a problem with sending an email",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 20.0
+    );
     }
   }
 }

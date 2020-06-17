@@ -6,6 +6,7 @@ import 'package:budget_sidekick/Models/category.dart';
 
 import 'package:budget_sidekick/Screens/Core/features/Analysis/DataRetrieval/monthlyData.dart';
 import 'package:budget_sidekick/Screens/Core/features/Categories/categories.dart';
+import 'package:budget_sidekick/Screens/Core/loading.dart';
 import 'package:budget_sidekick/Services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -55,7 +56,7 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
     'December'
   ];
   List<String> listOfYears = ['2018', '2019', '2020'];
-  List<Expense> listOfExpenses = [];
+
   List<Category> listOfCategories = [];
 
   @override
@@ -63,7 +64,7 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
     double width = MediaQuery.of(context).size.width;
     final user = Provider.of<User>(context);
     final height = MediaQuery.of(context).size.height;
-
+    List<Expense> listOfExpenses = [];
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(width * 0.050)),
@@ -99,15 +100,16 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                               (a, b) => MapEntry(a as String, b as double));
                           if (snapshot.hasData && map.isNotEmpty) {
                             return Container(
-                                height: height * 0.6,
+                                height: height * 0.8,
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding:
-                                          EdgeInsets.only(top: height * 0.03),
+                                      padding: EdgeInsets.only(
+                                        top: height * 0.03,
+                                      ),
                                     ),
                                     Center(
-                                      child: Text('Choose the desired month:'),
+                                      child: Text('Choose the desired time:',style: TextStyle(fontSize: 19),),
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -245,15 +247,16 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                                         )
                                       ],
                                     ),
-                                     Padding(
+                                    Padding(
                                       padding:
                                           EdgeInsets.only(top: height * 0.03),
                                     ),
-                                    Column(
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Center(
                                           child:
-                                              Text('Show data in percentages:'),
+                                              Text('Show data in percentages:',style: TextStyle(fontSize: 14)),
                                         ),
                                         Theme(
                                           data: Theme.of(context).copyWith(
@@ -279,7 +282,7 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                                                     (bool value) {
                                               return DropdownMenuItem<bool>(
                                                 value: value,
-                                                child: Text(value.toString()),
+                                                child: Text(value.toString(),style: TextStyle(fontSize: 14)),
                                               );
                                             }).toList(),
                                           ),
@@ -291,21 +294,16 @@ class _MonthlyAnalysisDialogState extends State<MonthlyAnalysisDialog> {
                                   ],
                                 ));
                           } else {
-                            return SizedBox(
-                                child: Text(
-                                    "Neki jebejo kategorije kolega al pa nimaš faking Expensov tele mamino"));
+                            return Loading();
                           }
                         },
                       );
                     } else {
-                      return SizedBox(
-                          child: Text("Neki jebejo expensi kolega"));
+                      return Loading();
                     }
                   });
             } else {
-              return SizedBox(
-                child: Text("Accounta ni ljega"),
-              );
+              return Loading();
             }
           }),
     );
