@@ -411,20 +411,20 @@ class _addEventCustomDialogState extends State<AddEventCustomDialog> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(width * 0.050)),
                   title: Text(
-                    "O marija pomagi",
+                    "No Categories",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.grey[700]),
                   ),
                   backgroundColor: Colors.white,
                   content: Text(
-                    "Pa se JEZUSA bom poklicu! Koji kurac delas tu brez kategorij?",
+                    "Whoops, looks like you have no categories set.",
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   actions: <Widget>[
                     FlatButton(
                       child: Text(
-                        "Kurba sm glup",
+                        "Ok",
                         style: TextStyle(color: Colors.blue),
                       ),
                       onPressed: () {
