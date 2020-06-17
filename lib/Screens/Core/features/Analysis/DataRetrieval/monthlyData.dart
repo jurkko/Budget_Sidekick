@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 
 Map<String, double> finalMap;
 
-Map toGraphdataMonthly(listOfCategories, listOfExpensesUnfiltered, month, year, profit) {
+Map toGraphdataMonthly(
+    listOfCategories, listOfExpensesUnfiltered, month, year, profit) {
   List<Expense> listOfExpenses =
       filterData(listOfExpensesUnfiltered, month, year, profit);
 
@@ -47,6 +48,13 @@ Map toGraphdataMonthly(listOfCategories, listOfExpensesUnfiltered, month, year, 
   return graphData2;
 }
 
+List<Expense> toTableDataMonthly(
+    listOfExpensesUnfiltered, month, year, profit) {
+  List<Expense> listOfExpenses =
+      filterData(listOfExpensesUnfiltered, month, year, profit);
+      return listOfExpenses;
+}
+
 List<Expense> filterData(listOfExpensesUnfiltered, month, year, profit) {
   List<Expense> listOfExpenses = [];
   for (var j = 0; j < listOfExpensesUnfiltered.length; j++) {
@@ -55,8 +63,10 @@ List<Expense> filterData(listOfExpensesUnfiltered, month, year, profit) {
     DateTime date = tempExpense.date;
     String dateYear = date.year.toString();
     String dateMonth = date.month.toString();
-    
-    if (dateYear == year && dateMonth == month && tempExpense.profit == profit) {
+
+    if (dateYear == year &&
+        dateMonth == month &&
+        tempExpense.profit == profit) {
       listOfExpenses.add(tempExpense);
     }
   }
@@ -131,9 +141,7 @@ String changeMonthToNumber(month) {
       break;
 
     default:
-      {
-        
-      }
+      {}
       break;
   }
   return month;

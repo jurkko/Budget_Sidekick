@@ -29,6 +29,7 @@ class MailState extends State<Mail> {
   Expense deletedExpense;
   List<Expense> listOfExpenses = [];
   String initialEvent;
+  String initialeEventName;
   String mailRecipient;
    final recipientController = TextEditingController();
   //Future<Iterable<Contact>> contacts = getContacts();
